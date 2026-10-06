@@ -1,0 +1,15 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "servers": {
+      "mlflow-mcp": {
+        "type": "local",
+        "command": ["uvx", "--from", "mlflow[mcp]>=3.5.1", "mlflow", "mcp", "run"],
+        "environment": {
+          "MLFLOW_TRACKING_URI": "sqlite:///mlflow.db",
+          "MLFLOW_MCP_TOOLS": "all"
+        }
+      }
+    }
+  }
+}

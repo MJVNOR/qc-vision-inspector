@@ -1,0 +1,7 @@
+{
+ "cut_produccion": 0.35774000000000006,
+ "regla": "media de cortes calibrados a FAR5% en train-folds (receta fase A)",
+ "model": "efficientad-medium",
+ "steps": 5000,
+ "trained_on": "good-only-folds"
+}

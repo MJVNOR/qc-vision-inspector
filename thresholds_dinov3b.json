@@ -1,0 +1,7 @@
+{
+ "cut_produccion": 0.2149,
+ "regla": "media de cortes calibrados a FAR5% en train-folds",
+ "backbone": "facebook/dinov3-vitb16-pretrain-lvd1689m",
+ "backbone_rev": "5931719e67bbdb9737e363e781fb0c67687896bc",
+ "C": 1.0
+}

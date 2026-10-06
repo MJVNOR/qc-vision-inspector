@@ -1,0 +1,27 @@
+[project]
+name = "betterclasificator"
+version = "0.1.0"
+requires-python = ">= 3.12"
+dependencies = [
+    "marimo[mcp]",
+    "pandas",
+    "pillow",
+    "altair",
+    "torch",
+    "torchvision",
+    "transformers>=4.56",
+    "timm",
+    "scikit-learn",
+    "mlflow[mcp]>=3.5.1",
+    "optuna>=5.0.0",
+    "anomalib>=2.6.2",
+]
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cu128" }]
+torchvision = [{ index = "pytorch-cu128" }]

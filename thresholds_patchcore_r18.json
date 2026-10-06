@@ -1,0 +1,8 @@
+{
+ "cut_produccion": 29.11440234714084,
+ "cut_far1": 31.699753044976116,
+ "regla": "cuantil 95 de scores GOOD full-train (273)",
+ "backbone": "resnet18",
+ "layers": "layer2+layer3",
+ "k": 9
+}
