@@ -11,5 +11,6 @@ mvtec_anomaly_detection/
 mvtec_ad_evaluation/
 datasets/
 results*/
+transistor_norm/
 anomalib_install.log
 *.pyc
