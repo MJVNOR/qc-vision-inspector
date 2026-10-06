@@ -1,0 +1,48 @@
+{
+ "project": "transistor_binary",
+ "backbone": "facebook/dinov2-base",
+ "effad_size": "medium",
+ "alphas_per_fold": [
+  0.05,
+  0.05,
+  0.05,
+  0.05,
+  0.05
+ ],
+ "fused_thr_per_fold": [
+  2.7013036891665525,
+  2.7854329010351258,
+  2.9958482806114386,
+  2.8605904267586166,
+  2.702176563383069
+ ],
+ "q99_per_fold": [
+  33.673857040405274,
+  34.039946975708,
+  34.30438186645507,
+  34.03566146850586,
+  34.78663635253906
+ ],
+ "prod_thr": 2.817462955477004,
+ "prod_q99": 33.694555053710936,
+ "prod_alpha": 0.05,
+ "target_far": 0.05,
+ "seeds": [
+  11,
+  22,
+  33,
+  44,
+  55
+ ],
+ "versions": {
+  "torch": "2.11.0+cu128",
+  "sklearn": "1.9.1",
+  "transformers": "5.18.0"
+ },
+ "fingerprint": "943ae352501916c0",
+ "date": "2026-10-06",
+ "mlflow_experiment": "transistor_binary",
+ "effad_ckpt": "models/efficientad_em.ckpt",
+ "effad_onnx": "models\\transistor_binary\\onnx\\efficientad.onnx",
+ "mlflow_run_id": "b8c636a924054840af43666be8c7aed0"
+}

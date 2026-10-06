@@ -1,0 +1,1 @@
+Re-entreno (fase_c.py:85-87): EfficientAd(model_size="medium"), Engine(max_steps=5000), datamodule solo GOOD-train por fold, predict test-fold. Imagenes a 256px (EFFICIENTAD_IMAGE_SIZE en config). Warm-start actual: models/fase_c_oof_scores.npz.
