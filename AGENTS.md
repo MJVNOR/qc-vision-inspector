@@ -60,6 +60,20 @@ imbalanced: `data/processed/transistor_binary/{good:273, bad:40}` + `labels.csv`
   imports count as definitions (no double `import X as Y`).
 - Re-running cells cascades downstream, including `mlflow_log` cells
   (re-logs runs → delete duplicates, keep latest per run name).
+- `notebooks/industrial_master.py` is the reusable GOOD/BAD template (A–H stay
+  as experimental history, never modify them for master work). Rules: no
+  transistor hardcodes (`313`, defect lists, `bad_022`, `experiment_ids=["1"]`
+  — resolve MLflow by name); caches under `models/<PROJECT_NAME>/` with dataset
+  fingerprint; all calibration train-only per fold via `cv_splits()`
+  (`StratifiedGroupKFold` when a group column exists); local search lives only
+  in `compute_local_anomaly_score` (FAISS door); underscore names are
+  cell-local, so readable `_train_idx`-style names are safe to repeat.
+- Export a notebook snapshot with
+  `uv run marimo export ipynb notebooks/<n>.py -o notebooks/<n>.ipynb`
+  (needs `nbformat`). Extra runtime deps from master work: `seaborn`, `onnx`,
+  `onnxruntime`, `skl2onnx`.
+- Kernel restarts reassign marimo cell IDs: never cache cell IDs across
+  restarts — re-resolve by code/name, like sessions.
 
 ## MLflow
 

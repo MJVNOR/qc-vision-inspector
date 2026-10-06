@@ -54,6 +54,9 @@ Metrics/CSVs land in `reports/`, figures in `reports/figures/`, model files in `
 | `fase_f.py` | Frozen D-alpha fusion + rescue head | `reports/fase_f_fold_metrics.csv`, `models/thresholds.json` |
 | `fase_g.py` | Robustness: repeated 5×5 CV + inference stress | `reports/fase_g_repeated.csv`, `reports/fase_g_stress.csv` |
 | `fase_h.py` | Geometric norm (`data/interim/transistor_norm/`) + TTA eval | `reports/fase_h_repeated.csv`, `reports/fase_h_tta.csv` |
+| `industrial_master.py` | **Reusable GOOD/BAD template** consolidating the A–H winner (DINOv2 + LogReg + EfficientAD-medium + D-alpha + local q99 rescue). Also exported as `industrial_master.ipynb` | `models/<project>/` (cache, OOF, `onnx/`, `config_freeze.json`), `reports/figures/<project>/` |
+
+Reuse with a new part: point `PROJECT_NAME`/`DATASET_DIR` (§1) at `dataset/{labels.csv,good/,bad/}` — everything else (splits, train-only calibration, namespaced caches, MLflow-by-name) is generic. Current verdict on transistor (repeated 5×5): rescue BAD recall **1.000±0.000** (25/25 folds), FAR **0.097** → below the default pilot bar, see summary cell.
 
 Pilot inference without notebooks: `uv run python -m betterclasificator.modeling.train --logreg --bank`
 (materializes `models/`), then `uv run python -m betterclasificator.modeling.predict IMG...`.
