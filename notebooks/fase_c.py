@@ -32,7 +32,7 @@ def _():
     import pandas as pd
     from pathlib import Path
     from sklearn.model_selection import StratifiedKFold
-    BDIR = Path("transistor_binary")
+    BDIR = Path("data/processed/transistor_binary")
     LAB = pd.read_csv(BDIR / "labels.csv")
     CSIZES = {"es": "small", "em": "medium"}
     Y = (LAB["label"] == "bad").to_numpy(int)
@@ -151,7 +151,7 @@ def _(
             _ix = [_k for _k, _f in enumerate(_fns) if _dm[_f] == _d]
             _pd[_d] = round(float(_pr[_ix].mean()), 3)
         ec_perdef[_tag] = _pd
-        _fd = Path(f"mlfigs_faseC_{_tag}")
+        _fd = Path(f"reports/figures/mlfigs_faseC_{_tag}")
         _fd.mkdir(exist_ok=True)
         _fg, _ax = plt.subplots()
         RocCurveDisplay.from_predictions(_oy, _os, ax=_ax, name="pooled OOF")
@@ -200,7 +200,7 @@ def _(
                 _sh.paste(_t, (_k * 160, 20))
                 _dr.text((_k * 160 + 4, 2), _ff, fill="black")
             _sh.save(_fd / "mapas.png")
-        Path(f"thresholds_efficientad_{_tag}.json").write_text(_J.dumps({"cut_produccion": _cut, "regla": "media de cortes calibrados a FAR5% en train-folds (receta fase A)", "model": "efficientad-" + CSIZES[_tag], "steps": NSTEPS, "trained_on": "good-only-folds"}, indent=1))
+        Path(f"models/thresholds_efficientad_{_tag}.json").write_text(_J.dumps({"cut_produccion": _cut, "regla": "media de cortes calibrados a FAR5% en train-folds (receta fase A)", "model": "efficientad-" + CSIZES[_tag], "steps": NSTEPS, "trained_on": "good-only-folds"}, indent=1))
         print(f"figs {_tag} ok cut={_cut:.4f} perdef={_pd} nmaps={len(_th)}", flush=True)
     return ec_cut5, ec_perdef, plt
 
@@ -230,11 +230,11 @@ def _(CSIZES, IMGSZ, NSTEPS, ec_cut5, ec_perdef, ec_rows):
                     mlflow.log_metric(f"{_sfx}_{_m}_std", float(_s2[_m].std()))
             mlflow.log_metrics({f"recall_def_{_k}": float(_v) for _k, _v in ec_perdef[_tag].items()})
             mlflow.log_metric("cut_far5", float(ec_cut5[_tag]))
-            _sub.to_csv(f"fase_c_fold_metrics_{_tag}.csv", index=False)
-            mlflow.log_artifact(f"fase_c_fold_metrics_{_tag}.csv")
-            mlflow.log_artifact(f"thresholds_efficientad_{_tag}.json")
+            _sub.to_csv(f"reports/fase_c_fold_metrics_{_tag}.csv", index=False)
+            mlflow.log_artifact(f"reports/fase_c_fold_metrics_{_tag}.csv")
+            mlflow.log_artifact(f"models/thresholds_efficientad_{_tag}.json")
             for _p in ["roc.png", "scores_hist.png", "por_defecto.png", "confusion.png", "mapas.png"]:
-                mlflow.log_artifact(f"mlfigs_faseC_{_tag}/" + _p)
+                mlflow.log_artifact(f"reports/figures/mlfigs_faseC_{_tag}/" + _p)
             print(f"mlflow faseC_{_tag} ok", flush=True)
     return (mlflow,)
 
@@ -268,11 +268,11 @@ def _(CSIZES, Path, mlflow, pd, plt):
     _axx.set_ylim(0, 1.05)
     plt.tight_layout()
     for _tag in CSIZES:
-        _fx.savefig(Path(f"mlfigs_faseC_{_tag}") / "comparativa_abc.png", dpi=100)
+        _fx.savefig(Path(f"reports/figures/mlfigs_faseC_{_tag}") / "comparativa_abc.png", dpi=100)
         _h2 = _qa.search_runs(experiment_ids=["1"], filter_string="tags.mlflow.runName = " + chr(34) + f"faseC_{_tag}_efficientad" + chr(34))
         _r2 = sorted(_h2, key=lambda _r: _r.info.start_time)[-1].info.run_id
         with mlflow.start_run(run_id=_r2):
-            mlflow.log_artifact(f"mlfigs_faseC_{_tag}/comparativa_abc.png")
+            mlflow.log_artifact(f"reports/figures/mlfigs_faseC_{_tag}/comparativa_abc.png")
     plt.close(_fx)
     cmp_abc
     return
@@ -295,7 +295,7 @@ def _(CSIZES, Path, mo):
     _order = ["comparativa_abc.png", "roc.png", "scores_hist.png", "por_defecto.png", "confusion.png", "mapas.png"]
     _gal = {}
     for _tag in CSIZES:
-        _d = Path(f"mlfigs_faseC_{_tag}")
+        _d = Path(f"reports/figures/mlfigs_faseC_{_tag}")
         _ims = [mo.image(str((_d / _p).resolve()), width=520, caption=f"{_tag}/{_p}") for _p in _order if (_d / _p).exists()]
         _gal[_tag] = _ims
     _rows = []
@@ -314,12 +314,12 @@ def _(CSIZES, ec_testscores, mlflow, np):
     for (_tag, _fold), (_te, _ss) in ec_testscores.items():
         _ec_d[f"{_tag}_fold{_fold}_idx"] = np.asarray(_te)
         _ec_d[f"{_tag}_fold{_fold}_score"] = np.asarray(_ss, dtype=np.float64)
-    np.savez_compressed("fase_c_oof_scores.npz", **_ec_d)
+    np.savez_compressed("models/fase_c_oof_scores.npz", **_ec_d)
     for _tag in CSIZES:
         _h = _MCs().search_runs(experiment_ids=["1"], filter_string="tags.mlflow.runName = " + chr(34) + f"faseC_{_tag}_efficientad" + chr(34))
         _rid = sorted(_h, key=lambda _r: _r.info.start_time)[-1].info.run_id
         with mlflow.start_run(run_id=_rid):
-            mlflow.log_artifact("fase_c_oof_scores.npz")
+            mlflow.log_artifact("models/fase_c_oof_scores.npz")
         print(f"oof npz -> {_rid[:8]} ({_tag})", flush=True)
     return
 

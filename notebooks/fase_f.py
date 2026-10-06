@@ -34,13 +34,13 @@ def _():
     from pathlib import Path
     from sklearn.model_selection import StratifiedKFold
     from PIL import Image as _PIf
-    FLAB = pd.read_csv(Path("transistor_binary") / "labels.csv")
+    FLAB = pd.read_csv(Path("data/processed/transistor_binary") / "labels.csv")
     FY = (FLAB["label"] == "bad").to_numpy(int)
     FFOLDS = list(StratifiedKFold(n_splits=5, shuffle=True, random_state=42).split(FLAB, FY))
     FREZ = [224, 512]
     FAREA, FBUCKET = {}, {}
     for _r in FLAB[FLAB.label == "bad"].itertuples():
-        _mp = Path("mvtec_anomaly_detection/transistor/ground_truth") / _r.defect / (_r.original_path.split("/")[-1].replace(".png", "_mask.png"))
+        _mp = Path("data/raw/mvtec_anomaly_detection/transistor/ground_truth") / _r.defect / (_r.original_path.split("/")[-1].replace(".png", "_mask.png"))
         _a = 100 * (np.asarray(_PIf.open(_mp).convert("L")) > 127).mean()
         FAREA[_r.filename] = round(float(_a), 2)
         FBUCKET[_r.filename] = "tiny<1%" if _a < 1 else ("mid1-3%" if _a < 3 else "big>3%")
@@ -63,7 +63,7 @@ def _(FFOLDS, FLAB, FREZ, FY, Path, np):
     _bm.to(_dev)
     def _patches(_idx, _sz):
         _r = FLAB.iloc[int(_idx)]
-        _im = Image.open(Path("transistor_binary") / ("good" if _r["label"] == "good" else "bad") / _r["filename"]).convert("RGB")
+        _im = Image.open(Path("data/processed/transistor_binary") / ("good" if _r["label"] == "good" else "bad") / _r["filename"]).convert("RGB")
         _inp = _proc(images=_im, size={"height": _sz, "width": _sz}, return_tensors="pt")
         with torch.inference_mode():
             _h = _bm(**{k: v.to(_dev) for k, v in _inp.items()}).last_hidden_state[:, 1:, :].squeeze(0)
@@ -95,10 +95,10 @@ def _(FFOLDS, FLAB, FREZ, FY, Path, np):
 @app.cell
 def _(FFOLDS, FLAB, FREZ, FY, fl_scores, np, pd):
     from sklearn.metrics import roc_curve, auc, precision_recall_fscore_support
-    _d2 = np.load("fase_a_oof_dinov2.npz")
+    _d2 = np.load("models/fase_a_oof_dinov2.npz")
     _d2m = dict(zip([str(_f) for _f in _d2["fnames"]], _d2["scores"]))
     _D2 = np.array([_d2m[_f] for _f in FLAB.filename])
-    _ec = np.load("fase_c_oof_scores.npz")
+    _ec = np.load("models/fase_c_oof_scores.npz")
     _emm = {}
     for _f in range(5):
         for _i, _ss in zip(_ec[f"em_fold{_f}_idx"], _ec[f"em_fold{_f}_score"]):
@@ -148,10 +148,10 @@ def _(FBUCKET, FFOLDS, FLAB, FY, fu_local, np, pd):
         _pc, _rc, _f1, _ = _prf2(_yt, _pr, average="binary", zero_division=0)
         _fpr, _tpr, _ = _rc2(_yt, _sc)
         return {"bad_recall": round(float(_rc), 3), "far": round(_fp / max(_fp + _tn, 1), 3), "frr": round(_fn / max(_fn + _tp, 1), 3), "precision": round(float(_pc), 3), "f1": round(float(_f1), 3), "auroc": round(float(_au2(_fpr, _tpr)), 3)}
-    _d2 = np.load("fase_a_oof_dinov2.npz")
+    _d2 = np.load("models/fase_a_oof_dinov2.npz")
     _d2m = dict(zip([str(_f) for _f in _d2["fnames"]], _d2["scores"]))
     _D2 = np.array([_d2m[_f] for _f in FLAB.filename])
-    _ec = np.load("fase_c_oof_scores.npz")
+    _ec = np.load("models/fase_c_oof_scores.npz")
     _emm = {}
     for _f in range(5):
         for _i, _ss in zip(_ec[f"em_fold{_f}_idx"], _ec[f"em_fold{_f}_score"]):
@@ -261,7 +261,7 @@ def _(FFOLDS, FY, fu2_rows, fu_local, fu_size, np, pd):
     _axx.set_title("D-alpha vs F rescue")
     _axx.set_ylim(0, 1.05)
     plt.tight_layout()
-    _fd = _Pf("mlfigs_faseF")
+    _fd = _Pf("reports/figures/mlfigs_faseF")
     _fd.mkdir(exist_ok=True)
     _fx.savefig(_fd / "comparativa_f.png", dpi=100)
     plt.close(_fx)
@@ -304,10 +304,10 @@ def _(fu2_rows, fu_b22, fu_local_folds, fu_size, fu_type):
         _szk = {"tiny<1%": "tiny_lt1", "mid1-3%": "mid_1_3", "big>3%": "big_gt3"}
         mlflow.log_metrics({f"rescue_recall_size_{_szk[_k]}": float(_v) for _k, _v in fu_size.items()})
         mlflow.log_metrics({f"rescue_recall_def_{_k}": float(_v) for _k, _v in fu_type.items()})
-        fu2_rows.to_csv("fase_f_fold_metrics.csv", index=False)
-        mlflow.log_artifact("fase_f_fold_metrics.csv")
+        fu2_rows.to_csv("reports/fase_f_fold_metrics.csv", index=False)
+        mlflow.log_artifact("reports/fase_f_fold_metrics.csv")
         for _p in ["comparativa_f.png", "sizebars.png"]:
-            mlflow.log_artifact("mlfigs_faseF/" + _p)
+            mlflow.log_artifact("reports/figures/mlfigs_faseF/" + _p)
         print("mlflow faseF ok", flush=True)
     return
 
@@ -328,7 +328,7 @@ def _(mo):
 @app.cell
 def _(Path, mo):
     _order = ["comparativa_f.png", "sizebars.png"]
-    _ims = [mo.image(str((Path("mlfigs_faseF") / _p).resolve()), width=560, caption=_p) for _p in _order if (Path("mlfigs_faseF") / _p).exists()]
+    _ims = [mo.image(str((Path("reports/figures/mlfigs_faseF") / _p).resolve()), width=560, caption=_p) for _p in _order if (Path("reports/figures/mlfigs_faseF") / _p).exists()]
     mo.vstack([mo.md(f"### Galeria F ({len(_ims)}/{len(_order)})"), mo.hstack(_ims)])
     return
 
@@ -336,7 +336,7 @@ def _(Path, mo):
 @app.cell
 def _(GLAB, GY, np):
     from sklearn.linear_model import LogisticRegression as _LRg
-    _saved2 = __import__("torch").load("fase_a_emb_dinov2.pt", weights_only=False)
+    _saved2 = __import__("torch").load("models/fase_a_emb_dinov2.pt", weights_only=False)
     _fn2 = [str(_f) for _f in _saved2["fnames"]]
     _X2 = _saved2["X"]
     _y2 = (GLAB.set_index("filename").loc[_fn2]["label"] == "bad").to_numpy(int)

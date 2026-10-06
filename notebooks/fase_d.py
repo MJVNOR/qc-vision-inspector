@@ -15,7 +15,7 @@ def _():
 def _(mo):
     mo.md("""
     # Fase D — ensemble DINOv2 + EfficientAD-em
-    Scores OOF de ambos (`fase_a_oof_dinov2.npz`, `fase_c_oof_scores.npz`).
+    Scores OOF de ambos (`models/fase_a_oof_dinov2.npz`, `models/fase_c_oof_scores.npz`).
     Fusion alpha + LogReg-2D, corte calibrado en train. Objetivo: max recall BAD con FAR<=5%.
     """)
     return
@@ -33,13 +33,13 @@ def _():
     import pandas as pd
     from pathlib import Path
     from sklearn.model_selection import StratifiedKFold
-    ELAB = pd.read_csv(Path("transistor_binary") / "labels.csv")
+    ELAB = pd.read_csv(Path("data/processed/transistor_binary") / "labels.csv")
     EY = (ELAB["label"] == "bad").to_numpy(int)
     EFOLDS = list(StratifiedKFold(n_splits=5, shuffle=True, random_state=42).split(ELAB, EY))
-    _d2 = np.load("fase_a_oof_dinov2.npz")
+    _d2 = np.load("models/fase_a_oof_dinov2.npz")
     _d2map = dict(zip([str(_f) for _f in _d2["fnames"]], _d2["scores"]))
     D2 = np.array([_d2map[_f] for _f in ELAB.filename])
-    _ec = np.load("fase_c_oof_scores.npz")
+    _ec = np.load("models/fase_c_oof_scores.npz")
     _emmap = {}
     for _f in range(5):
         for _i, _s in zip(_ec[f"em_fold{_f}_idx"], _ec[f"em_fold{_f}_score"]):
@@ -135,7 +135,7 @@ def _(EFOLDS, ELAB, EY, en_cuts, en_scores, pd):
             _row[f"{_m}_result"] = "bad" if _sc >= en_cuts[(_m, _f)] else "good"
         _rows.append(_row)
     en_bad = pd.DataFrame(_rows)
-    en_bad.to_csv("fase_d_bad_table.csv", index=False)
+    en_bad.to_csv("reports/fase_d_bad_table.csv", index=False)
     _dm = dict(zip(ELAB.filename, ELAB.defect))
     en_perdef = {}
     for _m in ["dino", "em", "alpha", "lr2"]:
@@ -156,7 +156,7 @@ def _(EY, en_cuts, en_scores, np):
     import matplotlib.pyplot as plt
     from sklearn.metrics import ConfusionMatrixDisplay
     from pathlib import Path as _P2
-    _fd = _P2("mlfigs_faseD")
+    _fd = _P2("reports/figures/mlfigs_faseD")
     _fd.mkdir(exist_ok=True)
     _pool = {}
     for _m in ["dino", "em", "alpha", "lr2"]:
@@ -218,11 +218,11 @@ def _(en_alpha, en_perdef, en_rows):
                 mlflow.log_metric(f"{_m}_{_k}_mean", float(_s[_k].mean()))
                 mlflow.log_metric(f"{_m}_{_k}_std", float(_s[_k].std()))
             mlflow.log_metrics({f"{_m}_recall_def_{_k}": float(_v) for _k, _v in en_perdef[_m].items()})
-        en_rows.to_csv("fase_d_fold_metrics.csv", index=False)
-        mlflow.log_artifact("fase_d_fold_metrics.csv")
-        mlflow.log_artifact("fase_d_bad_table.csv")
+        en_rows.to_csv("reports/fase_d_fold_metrics.csv", index=False)
+        mlflow.log_artifact("reports/fase_d_fold_metrics.csv")
+        mlflow.log_artifact("reports/fase_d_bad_table.csv")
         for _p in ["confusion_alpha.png", "confusion_lr2.png", "scatter_dino_em.png"]:
-            mlflow.log_artifact("mlfigs_faseD/" + _p)
+            mlflow.log_artifact("reports/figures/mlfigs_faseD/" + _p)
         print("mlflow faseD ok", flush=True)
     return (mlflow,)
 
@@ -256,12 +256,12 @@ def _(en_rows, mlflow, pd):
     _axx.set_title("A vs B vs C vs D — MLflow + libreta")
     _axx.set_ylim(0, 1.05)
     _PP.tight_layout()
-    _fx.savefig("mlfigs_faseD/comparativa_abcd.png", dpi=100)
+    _fx.savefig("reports/figures/mlfigs_faseD/comparativa_abcd.png", dpi=100)
     _PP.close(_fx)
     _h9 = _qq.search_runs(experiment_ids=["1"], filter_string="tags.mlflow.runName = " + chr(34) + "faseD_ensemble" + chr(34))
     _r9 = sorted(_h9, key=lambda _r: _r.info.start_time)[-1].info.run_id
     with mlflow.start_run(run_id=_r9):
-        mlflow.log_artifact("mlfigs_faseD/comparativa_abcd.png")
+        mlflow.log_artifact("reports/figures/mlfigs_faseD/comparativa_abcd.png")
     cmp_abcd
     return
 
@@ -282,7 +282,7 @@ def _(mo):
 @app.cell
 def _(Path, mo):
     _order = ["comparativa_abcd.png", "scatter_dino_em.png", "confusion_alpha.png", "confusion_lr2.png"]
-    _ims = [mo.image(str((Path("mlfigs_faseD") / _p).resolve()), width=520, caption=_p) for _p in _order if (Path("mlfigs_faseD") / _p).exists()]
+    _ims = [mo.image(str((Path("reports/figures/mlfigs_faseD") / _p).resolve()), width=520, caption=_p) for _p in _order if (Path("reports/figures/mlfigs_faseD") / _p).exists()]
     _rows = [mo.hstack(_ims[_k:_k + 2]) for _k in range(0, len(_ims), 2)]
     mo.vstack([mo.md(f"### Galeria D ({len(_ims)}/{len(_order)})"), *_rows])
     return

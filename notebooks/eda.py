@@ -26,7 +26,7 @@ def datos():
     import pandas as pd
     from pathlib import Path
 
-    base = Path("transistor_binary")
+    base = Path("data/processed/transistor_binary")
     labels = pd.read_csv(base / "labels.csv")
     labels
 

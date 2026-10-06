@@ -38,7 +38,7 @@ def _():
     import pandas as pd
     from pathlib import Path
     from sklearn.model_selection import StratifiedKFold
-    BDIR = Path("transistor_binary")
+    BDIR = Path("data/processed/transistor_binary")
     LAB = pd.read_csv(BDIR / "labels.csv")
     PBACK = {"wrn50": "wide_resnet50_2", "r18": "resnet18"}
     Y = (LAB["label"] == "bad").to_numpy(int)
@@ -154,7 +154,7 @@ def _(BDIR, Image, LAB, Path, Y, np, pb_maps, pb_rows, pb_testscores, ptag):
     for _d in ["bent_lead", "cut_lead", "damaged_case", "misplaced"]:
         _ix = [_k for _k, _f in enumerate(_fnames_oof) if _dmap[_f] == _d]
         pb_perdef[_d] = round(float(_pb_pred[_ix].mean()), 3)
-    _figdir = Path(f"mlfigs_faseB_{ptag}")
+    _figdir = Path(f"reports/figures/mlfigs_faseB_{ptag}")
     _figdir.mkdir(exist_ok=True)
     _fig, _ax = plt.subplots()
     RocCurveDisplay.from_predictions(_ooy, _oos, ax=_ax, name="pooled OOF")
@@ -229,10 +229,10 @@ def _(IMGSZ, PBACK, pb_cut5, pb_perdef, pb_rows, ptag):
                 mlflow.log_metric(f"{_sfx}_{_m}_std", float(_sub[_m].std()))
         mlflow.log_metrics({f"recall_def_{_k}": float(_v) for _k, _v in pb_perdef.items()})
         mlflow.log_metric("cut_far5", float(pb_cut5))
-        pb_rows.to_csv(f"fase_b_fold_metrics_{ptag}.csv", index=False)
-        mlflow.log_artifact(f"fase_b_fold_metrics_{ptag}.csv")
+        pb_rows.to_csv(f"reports/fase_b_fold_metrics_{ptag}.csv", index=False)
+        mlflow.log_artifact(f"reports/fase_b_fold_metrics_{ptag}.csv")
         for _p in ["roc.png", "scores_hist.png", "por_defecto.png", "mapas.png"]:
-            mlflow.log_artifact(f"mlfigs_faseB_{ptag}/" + _p)
+            mlflow.log_artifact(f"reports/figures/mlfigs_faseB_{ptag}/" + _p)
         print(f"mlflow faseB_{ptag} ok")
     return (mlflow,)
 
@@ -278,7 +278,7 @@ def _(Path, pd, plt, ptag):
     _axc.set_title("A (supervisado) vs B (PatchCore) — desde MLflow")
     _axc.set_ylim(0, 1.05)
     plt.tight_layout()
-    _figc.savefig(Path(f"mlfigs_faseB_{ptag}") / "comparativa_ab.png", dpi=100)
+    _figc.savefig(Path(f"reports/figures/mlfigs_faseB_{ptag}") / "comparativa_ab.png", dpi=100)
     plt.close(_figc)
     cmp_ab
     return
@@ -300,7 +300,7 @@ def _(mo):
 @app.cell
 def _(Path, RocCurveDisplay, Y, np, pb_oos, pb_ooy, pb_testscores, plt, ptag):
     from sklearn.metrics import PrecisionRecallDisplay
-    _figdir2 = Path(f"mlfigs_faseB_{ptag}")
+    _figdir2 = Path(f"reports/figures/mlfigs_faseB_{ptag}")
     _figp, _axp = plt.subplots()
     PrecisionRecallDisplay.from_predictions(pb_ooy, pb_oos, ax=_axp, name="pooled OOF")
     _axp.set_title(f"PR PatchCore {ptag} (pooled)")
@@ -336,7 +336,7 @@ def _(Path, np, pb_oos, pb_ooy, pb_rows, pd, plt, ptag):
     _axs.plot(pb_sweep.q, pb_sweep.prec, "^-", label="precision")
     _axs.legend(fontsize=8)
     _axs.set_title(f"Barrido del corte pooled OOF {ptag}")
-    _figs.savefig(Path(f"mlfigs_faseB_{ptag}") / "sweep.png", dpi=100)
+    _figs.savefig(Path(f"reports/figures/mlfigs_faseB_{ptag}") / "sweep.png", dpi=100)
     plt.close(_figs)
     _figb, _axb = plt.subplots()
     for _f in sorted(pb_rows.fold.unique()):
@@ -347,7 +347,7 @@ def _(Path, np, pb_oos, pb_ooy, pb_rows, pd, plt, ptag):
     _axb.set_xlabel("FAR nominal (cuantil train-GOOD)")
     _axb.set_ylabel("FAR realizado (test)")
     _axb.set_title(f"Calibracion FAR {ptag}: nominal vs realizado")
-    _figb.savefig(Path(f"mlfigs_faseB_{ptag}") / "calib.png", dpi=100)
+    _figb.savefig(Path(f"reports/figures/mlfigs_faseB_{ptag}") / "calib.png", dpi=100)
     plt.close(_figb)
     pb_sweep
     return
@@ -369,7 +369,7 @@ def _(
     _figm, _axm = plt.subplots()
     ConfusionMatrixDisplay.from_predictions(pb_ooy, pb_pred, display_labels=["good", "bad"], ax=_axm)
     _axm.set_title(f"Confusion corte FAR5% {ptag}")
-    _figm.savefig(Path(f"mlfigs_faseB_{ptag}") / "confusion.png", dpi=100)
+    _figm.savefig(Path(f"reports/figures/mlfigs_faseB_{ptag}") / "confusion.png", dpi=100)
     plt.close(_figm)
     from PIL import Image as _PI2
     from PIL import ImageDraw as _DR2
@@ -386,7 +386,7 @@ def _(
         for _k, (_ff, _im) in enumerate(_th2):
             _sh2.paste(_im, (_k * 160, 20))
             _dr2.text((_k * 160 + 4, 2), _ff, fill="black")
-        _sh2.save(Path(f"mlfigs_faseB_{ptag}") / "errores_plain.png")
+        _sh2.save(Path(f"reports/figures/mlfigs_faseB_{ptag}") / "errores_plain.png")
     print(f"confusion+galeria {ptag} ok fn={len(_fn_plain)} fp8={len(_fp_plain)}")
     return
 
@@ -404,7 +404,7 @@ def _(LAB, Path, np, pb_maps, plt, ptag):
         _axt.scatter(_Z[_ii, 0], _Z[_ii, 1], s=10, alpha=0.7, label=_d)
     _axt.legend(markerscale=2, fontsize=8)
     _axt.set_title(f"t-SNE mapas PatchCore {ptag} (exploratorio)")
-    _fgt.savefig(Path(f"mlfigs_faseB_{ptag}") / "tsne.png", dpi=100)
+    _fgt.savefig(Path(f"reports/figures/mlfigs_faseB_{ptag}") / "tsne.png", dpi=100)
     plt.close(_fgt)
     print(f"tsne {ptag} ok n={len(_ids)}")
     return
@@ -439,7 +439,7 @@ def _(Path, Y, np, pb_cut5, pb_testscores, plt, ptag):
     _axf.axhline(pb_cut5, color="red", lw=2, label="corte FAR5%")
     _axf.legend(fontsize=8)
     _axf.set_title(f"Scores test por fold {ptag}")
-    _figf.savefig(Path(f"mlfigs_faseB_{ptag}") / "scores_folds.png", dpi=100)
+    _figf.savefig(Path(f"reports/figures/mlfigs_faseB_{ptag}") / "scores_folds.png", dpi=100)
     plt.close(_figf)
     print(f"scores_folds {ptag} ok")
     return
@@ -451,7 +451,7 @@ def _(Path, mlflow, ptag):
     _c3 = _MC3()
     _hits3 = _c3.search_runs(experiment_ids=["1"], filter_string="tags.mlflow.runName = " + chr(34) + f"faseB_{ptag}_patchcore" + chr(34))
     _rid3 = sorted(_hits3, key=lambda _r: _r.info.start_time)[-1].info.run_id
-    _figdir3 = Path(f"mlfigs_faseB_{ptag}")
+    _figdir3 = Path(f"reports/figures/mlfigs_faseB_{ptag}")
     with mlflow.start_run(run_id=_rid3):
         for _p in ["comparativa_ab.png", "pr.png", "roc_folds.png", "sweep.png", "calib.png", "confusion.png", "errores_plain.png", "tsne.png", "scores_folds.png"]:
             mlflow.log_artifact(str(_figdir3 / _p))
@@ -461,7 +461,7 @@ def _(Path, mlflow, ptag):
 
 @app.cell
 def _(Path, mo, ptag):
-    _d = Path(f"mlfigs_faseB_{ptag}")
+    _d = Path(f"reports/figures/mlfigs_faseB_{ptag}")
     _order = ["comparativa_ab.png", "roc.png", "roc_folds.png", "pr.png", "scores_hist.png", "scores_folds.png", "por_defecto.png", "sweep.png", "calib.png", "confusion.png", "errores_plain.png", "mapas.png", "tsne.png"]
     _ims = [mo.image(str((_d / _p).resolve()), width=520, caption=_p) for _p in _order if (_d / _p).exists()]
     _rows = [mo.hstack(_ims[_k:_k + 2]) for _k in range(0, len(_ims), 2)]
@@ -513,12 +513,12 @@ def _(
         _gs = np.array([float(_nn.kneighbors(_pm.numpy())[0].mean(axis=1).max()) for _pm in _parts])
         _c95, _c99 = float(np.quantile(_gs, 0.95)), float(np.quantile(_gs, 0.99))
         torch.save({"bank": _B, "backbone": PBACK[_pt], "layers": ["layer2", "layer3"], "img": IMGSZ, "k": 9, "coreset": 0.1, "seed": 42}, f"fase_b_bank_{_pt}.pt")
-        Path(f"thresholds_patchcore_{_pt}.json").write_text(_Jp.dumps({"cut_produccion": _c95, "cut_far1": _c99, "regla": "cuantil 95 de scores GOOD full-train (273)", "backbone": PBACK[_pt], "layers": "layer2+layer3", "k": 9}, indent=1))
+        Path(f"models/thresholds_patchcore_{_pt}.json").write_text(_Jp.dumps({"cut_produccion": _c95, "cut_far1": _c99, "regla": "cuantil 95 de scores GOOD full-train (273)", "backbone": PBACK[_pt], "layers": "layer2+layer3", "k": 9}, indent=1))
         _h = _pcp.search_runs(experiment_ids=["1"], filter_string="tags.mlflow.runName = " + chr(34) + f"faseB_{_pt}_patchcore" + chr(34))
         _rid = sorted(_h, key=lambda _r: _r.info.start_time)[-1].info.run_id
         with mlflow.start_run(run_id=_rid):
             mlflow.log_artifact(f"fase_b_bank_{_pt}.pt")
-            mlflow.log_artifact(f"thresholds_patchcore_{_pt}.json")
+            mlflow.log_artifact(f"models/thresholds_patchcore_{_pt}.json")
         print(f"prod {_pt} ok bank={_B.shape} cut95={_c95:.2f} -> {_rid[:8]}", flush=True)
         del _ex, _parts, _B
     return

@@ -1,9 +1,10 @@
 # BetterClasificator — binary good/bad classification of MVTec transistor
+(CCDS layout: `data/`, `notebooks/`, `models/`, `reports/`, `betterclasificator/`)
 
 Data-science repo (uv + marimo + torch CUDA + MLflow). Dataset is tiny and
-imbalanced: `transistor_binary/{good:273, bad:40}` + `labels.csv`
+imbalanced: `data/processed/transistor_binary/{good:273, bad:40}` + `labels.csv`
 (filename,label,defect,source,original_path). Originals under
-`mvtec_anomaly_detection/` are never modified.
+`data/raw/mvtec_anomaly_detection/` are never modified.
 
 ## Env (uv only)
 
@@ -22,10 +23,11 @@ imbalanced: `transistor_binary/{good:273, bad:40}` + `labels.csv`
   `((Get-Content .env | Select-String '^HF_TOKEN=').Line -replace '^HF_TOKEN=','').Trim()`
 - No `<` stdin redirect in pwsh. Long jobs run with `background=true`.
 
-## Marimo notebooks (`eda.py`, `fase_a.py`)
+## Marimo notebooks (`notebooks/eda.py`, `notebooks/fase_a.py`, …)
 
-- Server: `uv run marimo edit --no-token --no-skew-protection --port 2718 --host localhost --mcp code-mode --mcp-allow-remote <notebook.py>`
-  (with `HF_TOKEN` set in env). `--no-skew-protection` is required for the
+- Server (always from repo root — kernels resolve relative paths against CWD):
+  `uv run marimo edit --no-token --no-skew-protection --port 2718 --host localhost --mcp code-mode --mcp-allow-remote notebooks/<notebook.py>`
+  or `make notebooks` (all nine). (with `HF_TOKEN` set in env). `--no-skew-protection` is required for the
   OpenCode `marimo` MCP (`Missing server token` otherwise); `--mcp code-mode`
   mounts `/mcp/server` (off by default). Needs `uv add "marimo[mcp]"` for
   MCP SDK >=2.0. Kill stale server via
@@ -61,8 +63,9 @@ imbalanced: `transistor_binary/{good:273, bad:40}` + `labels.csv`
 
 ## MLflow
 
-- MLflow 3 rejects file store: use `sqlite:///mlflow.db`. Experiment
-  `transistor-binary`. View with `uv run mlflow ui`.
+- MLflow 3 rejects file store: use `sqlite:///mlflow.db` (stays at repo root;
+  artifact URIs are relative to it, so never move it). Experiment
+  `transistor-binary`. View with `uv run mlflow ui` (or `make mlflow`).
 - `opencode.jsonc` wires `mlflow-mcp` to that sqlite URI. MANDATORY split:
   every MLflow read/query goes through mlflow-mcp via the `execute` Code
   Mode bridge (`search({namespace:"mlflow-mcp"})`, then
@@ -79,5 +82,5 @@ imbalanced: `transistor_binary/{good:273, bad:40}` + `labels.csv`
   (public). DINOv2 has no pooler: use CLS token `last_hidden_state[:, 0]`.
   transformers>=4.56 is required for DINOv3 support.
 - `torch.load` defaults `weights_only=True` (torch≥2.6) and chokes on numpy
-  payloads: own cache files (e.g. `fase_a_emb.pt`) load with
+  payloads: own cache files (e.g. `models/fase_a_emb.pt`) load with
   `weights_only=False`.

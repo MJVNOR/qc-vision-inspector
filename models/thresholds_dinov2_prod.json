@@ -1,0 +1,6 @@
+{
+ "cut_produccion": 0.04554660618305206,
+ "regla": "cuantil 95 scores GOOD full-train (273 good / 40 bad)",
+ "backbone": "facebook/dinov2-base",
+ "C": 1.0
+}

@@ -33,11 +33,11 @@ def _():
     import pandas as pd
     from pathlib import Path
     from PIL import Image
-    HLAB = pd.read_csv(Path("transistor_binary") / "labels.csv")
+    HLAB = pd.read_csv(Path("data/processed/transistor_binary") / "labels.csv")
     HY = (HLAB["label"] == "bad").to_numpy(int)
     _rows = []
     for _r in HLAB.itertuples():
-        _im = Image.open(Path("transistor_binary") / ("good" if _r.label == "good" else "bad") / _r.filename).convert("L")
+        _im = Image.open(Path("data/processed/transistor_binary") / ("good" if _r.label == "good" else "bad") / _r.filename).convert("L")
         _a = np.asarray(_im)
         _m = _a < 100
         _ys, _xs = np.nonzero(_m)
@@ -51,7 +51,7 @@ def _():
 @app.cell
 def _(HLAB, Image, Path, hgeo, np, pd):
     _TX, _TY, _DB = 479.0, 497.0, 25.0
-    _ND = Path("transistor_norm")
+    _ND = Path("data/interim/transistor_norm")
     (_ND / "good").mkdir(parents=True, exist_ok=True)
     (_ND / "bad").mkdir(parents=True, exist_ok=True)
     _shifts = []
@@ -59,7 +59,7 @@ def _(HLAB, Image, Path, hgeo, np, pd):
         _row = hgeo[hgeo.file == _r.filename].iloc[0]
         _dx, _dy = _TX - _row.cx, _TY - _row.cy
         _folder = "good" if _r.label == "good" else "bad"
-        _im = Image.open(Path("transistor_binary") / _folder / _r.filename).convert("RGB")
+        _im = Image.open(Path("data/processed/transistor_binary") / _folder / _r.filename).convert("RGB")
         if max(abs(_dx), abs(_dy)) <= _DB:
             _a = np.asarray(_im)
             _ix, _iy = int(round(_dx)), int(round(_dy))
@@ -99,7 +99,7 @@ def _(HLAB, Image, Path):
     with torch.inference_mode():
         for _i in range(len(HLAB)):
             _r = HLAB.iloc[_i]
-            _im = Image.open(Path("transistor_norm") / ("good" if _r.label == "good" else "bad") / _r.filename).convert("RGB")
+            _im = Image.open(Path("data/interim/transistor_norm") / ("good" if _r.label == "good" else "bad") / _r.filename).convert("RGB")
             _o = _bmH(**{k: v.to(_devH) for k, v in _prH(images=_im, size={"height": 224, "width": 224}, return_tensors="pt").items()})
             _HC.append(_o.last_hidden_state[:, 0, :].squeeze(0).cpu())
             _HP.append(_o.last_hidden_state[:, 1:, :].squeeze(0).cpu())
@@ -136,7 +136,7 @@ def _(HLAB, HY, Path, np, torch):
         _t = []
         for _ii in _gt:
             _r = HLAB.iloc[_ii]
-            _im = _PIh.open(Path("transistor_norm") / "good" / _r.filename).convert("RGB").resize((256, 256))
+            _im = _PIh.open(Path("data/interim/transistor_norm") / "good" / _r.filename).convert("RGB").resize((256, 256))
             _t.append(torch.from_numpy(np.asarray(_im, dtype=np.float32) / 255.0).permute(2, 0, 1))
         _m = EfficientAd(model_size="medium", visualizer=False, evaluator=False)
         _eng = Engine(logger=False, default_root_dir="results_h_em", max_steps=5000)
@@ -175,7 +175,7 @@ def _(HLAB, HPATCH, HY, Image, Path, np, torch):
         _t = []
         for _ii in _tel:
             _r = HLAB.iloc[_ii]
-            _im = Image.open(Path("transistor_norm") / ("good" if _r.label == "good" else "bad") / _r.filename).convert("RGB").resize((256, 256))
+            _im = Image.open(Path("data/interim/transistor_norm") / ("good" if _r.label == "good" else "bad") / _r.filename).convert("RGB").resize((256, 256))
             _t.append(torch.from_numpy(np.asarray(_im, dtype=np.float32) / 255.0).permute(2, 0, 1))
         _dl = _DLh(_t, batch_size=16, collate_fn=lambda _b: _IBh(image=torch.stack(_b)))
         _em = _EAh(model_size="medium", visualizer=False, evaluator=False)
@@ -269,7 +269,7 @@ def _(
     _probe = []
     for _ii in list(range(10)) + list(range(273, 283)):
         _r = HLAB.iloc[_ii]
-        _im0 = Image.open(Path("transistor_norm") / ("good" if _r.label == "good" else "bad") / _r.filename).convert("RGB")
+        _im0 = Image.open(Path("data/interim/transistor_norm") / ("good" if _r.label == "good" else "bad") / _r.filename).convert("RGB")
         _s = _Tm.time()
         _o = _bmL(**{k: v.to(_devL) for k, v in _prL(images=_im0, size={"height": 224, "width": 224}, return_tensors="pt").items()})
         _tE = torch.from_numpy(np.asarray(_im0.resize((256, 256)), dtype=np.float32) / 255.0).permute(2, 0, 1)
@@ -394,7 +394,7 @@ def _(
         _pils, _emT, _own = [], [], []
         for _ii in _tel:
             _r = HLAB.iloc[_ii]
-            _im0 = Image.open(Path("transistor_norm") / ("good" if _r.label == "good" else "bad") / _r.filename).convert("RGB")
+            _im0 = Image.open(Path("data/interim/transistor_norm") / ("good" if _r.label == "good" else "bad") / _r.filename).convert("RGB")
             for (_dx, _dy) in _SH:
                 _av = _shT(_im0, _dx, _dy)
                 _pils.append(_av)
@@ -466,7 +466,7 @@ def _(hh_rows, ht_b22, ht_lat, ht_rows, pd):
     import mlflow
     from mlflow.tracking import MlflowClient as _MCh2
     from pathlib import Path as _Ph2
-    _fd = _Ph2("mlfigs_faseH")
+    _fd = _Ph2("reports/figures/mlfigs_faseH")
     _fd.mkdir(exist_ok=True)
     _cmp = pd.DataFrame([
         {"config": "G Dalpha", "recall": 0.940, "far": 0.060},
@@ -486,8 +486,8 @@ def _(hh_rows, ht_b22, ht_lat, ht_rows, pd):
     plt.tight_layout()
     _fx.savefig(_fd / "comparativa_gh.png", dpi=100)
     plt.close(_fx)
-    hh_rows.to_csv("fase_h_repeated.csv", index=False)
-    ht_rows.to_csv("fase_h_tta.csv", index=False)
+    hh_rows.to_csv("reports/fase_h_repeated.csv", index=False)
+    ht_rows.to_csv("reports/fase_h_tta.csv", index=False)
     mlflow.set_tracking_uri("sqlite:///mlflow.db")
     mlflow.set_experiment("transistor-binary")
     _rn = "faseH_geo"
@@ -504,9 +504,9 @@ def _(hh_rows, ht_b22, ht_lat, ht_rows, pd):
             "h_rescue_recall_std": round(float(_hr.bad_recall.std()), 3), "h_rescue_far_std": round(float(_hr.far.std()), 3)})
         _ht = ht_rows[ht_rows.method == "tta-R"]
         mlflow.log_metrics({"tta_recall_mean": round(float(_ht.bad_recall.mean()), 3), "tta_far_mean": round(float(_ht.far.mean()), 3)})
-        mlflow.log_artifact("fase_h_repeated.csv")
-        mlflow.log_artifact("fase_h_tta.csv")
-        mlflow.log_artifact("mlfigs_faseH/comparativa_gh.png")
+        mlflow.log_artifact("reports/fase_h_repeated.csv")
+        mlflow.log_artifact("reports/fase_h_tta.csv")
+        mlflow.log_artifact("reports/figures/mlfigs_faseH/comparativa_gh.png")
         print("mlflow faseH ok", flush=True)
     _cmp
     return
@@ -527,7 +527,7 @@ def _(mo):
 @app.cell
 def _(Path, mo):
     _order = ["comparativa_gh.png"]
-    _ims = [mo.image(str((Path("mlfigs_faseH") / _p).resolve()), width=640, caption=_p) for _p in _order if (Path("mlfigs_faseH") / _p).exists()]
+    _ims = [mo.image(str((Path("reports/figures/mlfigs_faseH") / _p).resolve()), width=640, caption=_p) for _p in _order if (Path("reports/figures/mlfigs_faseH") / _p).exists()]
     mo.vstack([mo.md(f"### Galeria H ({len(_ims)}/{len(_order)})"), mo.hstack(_ims)])
     return
 

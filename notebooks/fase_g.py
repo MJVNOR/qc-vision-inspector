@@ -38,13 +38,13 @@ def _():
     from sklearn.metrics import roc_curve, auc, precision_recall_fscore_support
     from transformers import AutoImageProcessor, AutoModel
     from PIL import Image
-    GLAB = pd.read_csv(Path("transistor_binary") / "labels.csv")
+    GLAB = pd.read_csv(Path("data/processed/transistor_binary") / "labels.csv")
     GY = (GLAB["label"] == "bad").to_numpy(int)
     GSEEDS = [42, 7, 123, 2024, 999]
-    _d2 = np.load("fase_a_oof_dinov2.npz")
+    _d2 = np.load("models/fase_a_oof_dinov2.npz")
     _d2m = dict(zip([str(_f) for _f in _d2["fnames"]], _d2["scores"]))
     GD2 = np.array([_d2m[_f] for _f in GLAB.filename])
-    _ec = np.load("fase_c_oof_scores.npz")
+    _ec = np.load("models/fase_c_oof_scores.npz")
     _emm = {}
     for _f in range(5):
         for _i, _ss in zip(_ec[f"em_fold{_f}_idx"], _ec[f"em_fold{_f}_score"]):
@@ -61,7 +61,7 @@ def _():
     with torch.inference_mode():
         for _i in range(len(GLAB)):
             _r = GLAB.iloc[_i]
-            _im = Image.open(Path("transistor_binary") / ("good" if _r["label"] == "good" else "bad") / _r["filename"]).convert("RGB")
+            _im = Image.open(Path("data/processed/transistor_binary") / ("good" if _r["label"] == "good" else "bad") / _r["filename"]).convert("RGB")
             _inp = _proc(images=_im, size={"height": 224, "width": 224}, return_tensors="pt")
             _PL.append(_bm(**{k: v.to(_dev) for k, v in _inp.items()}).last_hidden_state[:, 1:, :].squeeze(0).cpu())
             if (_i + 1) % 100 == 0:
@@ -170,7 +170,7 @@ def _(GLAB, GY, np):
     from torch.utils.data import DataLoader as _DL
     from sklearn.linear_model import LogisticRegression as _LRg2
     import torch.nn.functional as _F2
-    _s2 = __import__("torch").load("fase_a_emb_dinov2.pt", weights_only=False)
+    _s2 = __import__("torch").load("models/fase_a_emb_dinov2.pt", weights_only=False)
     _f2 = [str(_x) for _x in _s2["fnames"]]
     _yF = (GLAB.set_index("filename").loc[_f2]["label"] == "bad").to_numpy(int)
     _lrG = _LRg2(class_weight="balanced", C=1.0, max_iter=2000).fit(_s2["X"], _yF)
@@ -210,7 +210,7 @@ def _(AutoImageProcessor, AutoModel, GLAB, torch):
         _l, _t = int(_w * (1 - _s) / 2), int(_h * (1 - _s) / 2)
         return _im.crop((_l, _t, _l + int(_w * _s), _t + int(_h * _s))).resize((_w, _h))
     _VARS = ["clean", "bright085", "bright070", "shift10", "shift20", "zoomout090", "zoomout080", "cropin090", "cropin080"]
-    _s2 = torch.load("fase_a_emb_dinov2.pt", weights_only=False)
+    _s2 = torch.load("models/fase_a_emb_dinov2.pt", weights_only=False)
     _lrS = _LRs(class_weight="balanced", C=1.0, max_iter=2000).fit(_s2["X"], (GLAB.set_index("filename").loc[[str(_f) for _f in _s2["fnames"]]]["label"] == "bad").to_numpy(int))
     _prS = AutoImageProcessor.from_pretrained("facebook/dinov2-base")
     _bmS = AutoModel.from_pretrained("facebook/dinov2-base")
@@ -262,12 +262,12 @@ def _(
         _s = float(_v[6:]) / 100
         _l, _t = int(_w * (1 - _s) / 2), int(_h * (1 - _s) / 2)
         return _im.crop((_l, _t, _l + int(_w * _s), _t + int(_h * _s))).resize((_w, _h))
-    _sT = torch.load("fase_a_emb_dinov2.pt", weights_only=False)
+    _sT = torch.load("models/fase_a_emb_dinov2.pt", weights_only=False)
     _lrT = _LRT2(class_weight="balanced", C=1.0, max_iter=2000).fit(_sT["X"], (GLAB.set_index("filename").loc[[str(_f) for _f in _sT["fnames"]]]["label"] == "bad").to_numpy(int))
-    _d2 = np.load("fase_a_oof_dinov2.npz")
+    _d2 = np.load("models/fase_a_oof_dinov2.npz")
     _d2m = dict(zip([str(_f) for _f in _d2["fnames"]], _d2["scores"]))
     _D2 = np.array([_d2m[_f] for _f in GLAB.filename])
-    _ec = np.load("fase_c_oof_scores.npz")
+    _ec = np.load("models/fase_c_oof_scores.npz")
     _emm = {}
     for _f in range(5):
         for _i, _ss in zip(_ec[f"em_fold{_f}_idx"], _ec[f"em_fold{_f}_score"]):
@@ -330,7 +330,7 @@ def _(
         _pils, _emT, _keys = [], [], []
         for _ii in _sub:
             _r = GLAB.iloc[_ii]
-            _im0 = Image.open(Path("transistor_binary") / ("good" if _r["label"] == "good" else "bad") / _r["filename"]).convert("RGB")
+            _im0 = Image.open(Path("data/processed/transistor_binary") / ("good" if _r["label"] == "good" else "bad") / _r["filename"]).convert("RGB")
             for _v in _VARS:
                 _av = _aug2(_im0, _v)
                 _pils.append(_av)
@@ -398,7 +398,7 @@ def _(gg_rows, gs_b22, gs_drift):
     from pathlib import Path as _Ph
     from scipy.stats import beta as _beta
     _cp_low = round(float(_beta.ppf(0.025, 40, 1)), 3)
-    _fd = _Ph("mlfigs_faseG")
+    _fd = _Ph("reports/figures/mlfigs_faseG")
     _fd.mkdir(exist_ok=True)
     _gr = gg_rows[gg_rows.method == "rescue"]
     _fg, _ax = plt.subplots(1, 2, figsize=(10, 4))
@@ -421,8 +421,8 @@ def _(gg_rows, gs_b22, gs_drift):
     _as.set_title("stress: variantes (media 5 folds, subset 80)")
     _fs.savefig(_fd / "stress.png", dpi=100)
     plt.close(_fs)
-    gg_rows.to_csv("fase_g_repeated.csv", index=False)
-    gs_drift.to_csv("fase_g_stress.csv", index=False)
+    gg_rows.to_csv("reports/fase_g_repeated.csv", index=False)
+    gs_drift.to_csv("reports/fase_g_stress.csv", index=False)
     mlflow.set_tracking_uri("sqlite:///mlflow.db")
     mlflow.set_experiment("transistor-binary")
     _rn = "faseG_robustez"
@@ -438,10 +438,10 @@ def _(gg_rows, gs_b22, gs_drift):
             "dalpha_recall_mean": round(float(gg_rows[gg_rows.method == "Dalpha"].bad_recall.mean()), 3),
             "dalpha_far_mean": round(float(gg_rows[gg_rows.method == "Dalpha"].far.mean()), 3)})
         mlflow.log_metrics({f"b22_{_k}_{_kk}": float(_vv) for _k, _dd in gs_b22.items() for _kk, _vv in _dd.items()})
-        mlflow.log_artifact("fase_g_repeated.csv")
-        mlflow.log_artifact("fase_g_stress.csv")
-        mlflow.log_artifact("mlfigs_faseG/distrib.png")
-        mlflow.log_artifact("mlfigs_faseG/stress.png")
+        mlflow.log_artifact("reports/fase_g_repeated.csv")
+        mlflow.log_artifact("reports/fase_g_stress.csv")
+        mlflow.log_artifact("reports/figures/mlfigs_faseG/distrib.png")
+        mlflow.log_artifact("reports/figures/mlfigs_faseG/stress.png")
         print(f"mlflow faseG ok cp_low={_cp_low}", flush=True)
     return
 
@@ -461,7 +461,7 @@ def _(mo):
 @app.cell
 def _(Path, mo):
     _order = ["distrib.png", "stress.png"]
-    _ims = [mo.image(str((Path("mlfigs_faseG") / _p).resolve()), width=560, caption=_p) for _p in _order if (Path("mlfigs_faseG") / _p).exists()]
+    _ims = [mo.image(str((Path("reports/figures/mlfigs_faseG") / _p).resolve()), width=560, caption=_p) for _p in _order if (Path("reports/figures/mlfigs_faseG") / _p).exists()]
     mo.vstack([mo.md(f"### Galeria G ({len(_ims)}/{len(_order)})"), mo.hstack(_ims)])
     return
 

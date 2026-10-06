@@ -56,7 +56,7 @@ def modelo():
 def md_embeddings(mo):
     mo.md("""
     ### 2. Embeddings + cache
-    Una pasada por las 313 imagenes (1024px) y se guarda `fase_a_emb_{btag}.pt` (una por backbone).
+    Una pasada por las 313 imagenes (1024px) y se guarda `models/fase_a_emb_{btag}.pt` (una por backbone).
     Re-correr esta celda carga del cache en segundos.
     """)
     return
@@ -70,9 +70,9 @@ def embeddings(backbone, btag, device, processor, torch):
     from pathlib import Path
     import numpy as np
 
-    base = Path("transistor_binary")
+    base = Path("data/processed/transistor_binary")
     labels = pd.read_csv(base / "labels.csv")
-    cache = Path(f"fase_a_emb_{btag}.pt")  # cache por backbone: v2 y v3 no se mezclan
+    cache = Path(f"models/fase_a_emb_{btag}.pt")  # cache por backbone: v2 y v3 no se mezclan
 
     def _path(_r):
         return base / ("good" if _r["label"] == "good" else "bad") / _r["filename"]
@@ -192,8 +192,8 @@ def mlflow_log(X, backbone_id, btag, device, results):
         for _m in ["bad_recall", "far", "frr", "precision", "f1", "auroc"]:
             mlflow.log_metric(f"{_m}_mean", float(results[_m].mean()))
             mlflow.log_metric(f"{_m}_std", float(results[_m].std()))
-        results.to_csv(f"fase_a_fold_metrics_{btag}.csv", index=False)
-        mlflow.log_artifact(f"fase_a_fold_metrics_{btag}.csv")
+        results.to_csv(f"reports/fase_a_fold_metrics_{btag}.csv", index=False)
+        mlflow.log_artifact(f"reports/fase_a_fold_metrics_{btag}.csv")
         print("mlflow run ok")
     return (mlflow,)
 
@@ -315,8 +315,8 @@ def optuna_tune(
             "trials": 20, "objective": "recall@trainFAR5%", "threshold": "quantile-neg-95"})
         mlflow.log_params({"best_" + k: v for k, v in best_params.items()})
         mlflow.log_metric("best_recall_at_far5", best_value)
-        study.trials_dataframe().to_csv(f"fase_a_optuna_{btag}.csv", index=False)
-        mlflow.log_artifact(f"fase_a_optuna_{btag}.csv")
+        study.trials_dataframe().to_csv(f"reports/fase_a_optuna_{btag}.csv", index=False)
+        mlflow.log_artifact(f"reports/fase_a_optuna_{btag}.csv")
         print("best:", best_params, round(best_value, 3))
     return (study,)
 
@@ -458,7 +458,7 @@ def figs_log(
         _per_def[_d] = round(_tp / max(len(_idx), 1), 3)
 
     from pathlib import Path as _Path
-    _figdir = _Path(f"mlfigs_{btag}")
+    _figdir = _Path(f"reports/figures/mlfigs_{btag}")
     _figdir.mkdir(exist_ok=True)
 
     # ROC por fold + PR
@@ -597,7 +597,7 @@ def modelo_final(
     _rev = _mi(backbone_id).sha
     _thr = {"cut_produccion": cut_far5, "regla": "media de cortes calibrados a FAR5% en train-folds",
         "backbone": backbone_id, "backbone_rev": _rev, "C": 1.0}
-    Path(f"thresholds_{btag}.json").write_text(_json.dumps(_thr, indent=1))
+    Path(f"models/thresholds_{btag}.json").write_text(_json.dumps(_thr, indent=1))
     mlflow.set_tracking_uri("sqlite:///mlflow.db")
     mlflow.set_experiment("transistor-binary")
     with mlflow.start_run(run_name=f"faseA_{btag}_final"):
@@ -605,7 +605,7 @@ def modelo_final(
             "trained_on": "full-313", "cut": cut_far5, "n_good": 273, "n_bad": 40})
         mlflow.log_metrics({"train_recall_at_cut": round(_train_rec, 3), "train_far_at_cut": round(_train_far, 3)})
         _mlsk.log_model(_final, f"logreg_{btag}", registered_model_name="transistor-logreg")
-        mlflow.log_artifact(f"thresholds_{btag}.json")
+        mlflow.log_artifact(f"models/thresholds_{btag}.json")
         print("final ok, train recall:", round(_train_rec, 3))
     mo.md(f"### Modelo final registrado (`transistor-logreg`): train recall {_train_rec:.3f}, FAR {_train_far:.3f}, corte {cut_far5:.4f}")
     return
@@ -785,18 +785,18 @@ def _(np):
         from pathlib import Path as _P
         from sklearn.linear_model import LogisticRegression as _LR
         from sklearn.model_selection import StratifiedKFold as _SKF, cross_val_predict as _cvp
-        _labels = _pd.read_csv(_P("transistor_binary") / "labels.csv")
+        _labels = _pd.read_csv(_P("data/processed/transistor_binary") / "labels.csv")
         _y = (_labels["label"] == "bad").to_numpy(int)
-        _saved = torch.load(_P("fase_a_emb_dinov2.pt"), weights_only=False)
+        _saved = torch.load(_P("models/fase_a_emb_dinov2.pt"), weights_only=False)
         _s = _cvp(_LR(class_weight="balanced", C=1.0, max_iter=2000), _saved["X"], _y, cv=_SKF(n_splits=5, shuffle=True, random_state=42), method="predict_proba")[:, 1]
-        _np.savez_compressed("fase_a_oof_dinov2.npz", scores=np.asarray(_s), fnames=np.asarray(_saved["fnames"]), y=_y)
+        _np.savez_compressed("models/fase_a_oof_dinov2.npz", scores=np.asarray(_s), fnames=np.asarray(_saved["fnames"]), y=_y)
         from mlflow.tracking import MlflowClient as _MCd
         import mlflow as _mlf
         _mlf.set_tracking_uri("sqlite:///mlflow.db")
         _h = _MCd().search_runs(experiment_ids=["1"], filter_string="tags.mlflow.runName = " + chr(34) + "faseA_dinov2_logreg" + chr(34))
         _rid = sorted(_h, key=lambda _r: _r.info.start_time)[-1].info.run_id
         with _mlf.start_run(run_id=_rid):
-            _mlf.log_artifact("fase_a_oof_dinov2.npz")
+            _mlf.log_artifact("models/fase_a_oof_dinov2.npz")
         print(f"d2 oof ok -> {_rid[:8]}", flush=True)
         return _s, _saved["fnames"], _y
     D2OOF, D2FN, D2Y = _d2run()

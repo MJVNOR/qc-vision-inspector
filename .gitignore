@@ -5,12 +5,14 @@ __marimo__/
 *.pt
 *.ckpt
 *.npz
+*.joblib
 mlflow.db
 mlruns/
-mvtec_anomaly_detection/
-mvtec_ad_evaluation/
+data/raw/
+data/interim/
+data/external/
 datasets/
+mvtec_ad_evaluation/
 results*/
-transistor_norm/
 anomalib_install.log
 *.pyc

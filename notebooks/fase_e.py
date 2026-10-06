@@ -32,13 +32,13 @@ def _():
     import pandas as pd
     from pathlib import Path
     from sklearn.model_selection import StratifiedKFold
-    ELAB = pd.read_csv(Path("transistor_binary") / "labels.csv")
+    ELAB = pd.read_csv(Path("data/processed/transistor_binary") / "labels.csv")
     EY = (ELAB["label"] == "bad").to_numpy(int)
     EFOLDS = list(StratifiedKFold(n_splits=5, shuffle=True, random_state=42).split(ELAB, EY))
-    _d2 = np.load("fase_a_oof_dinov2.npz")
+    _d2 = np.load("models/fase_a_oof_dinov2.npz")
     _d2map = dict(zip([str(_f) for _f in _d2["fnames"]], _d2["scores"]))
     ED2 = np.array([_d2map[_f] for _f in ELAB.filename])
-    _ec = np.load("fase_c_oof_scores.npz")
+    _ec = np.load("models/fase_c_oof_scores.npz")
     _emmap = {}
     for _f in range(5):
         for _i, _ss in zip(_ec[f"em_fold{_f}_idx"], _ec[f"em_fold{_f}_score"]):
@@ -159,7 +159,7 @@ def _(ED2, EEM, EFOLDS, ELAB, EY, Path, mo, np, pd):
     _bm.to(_dev)
     def _cls(_idx):
         _r = ELAB.iloc[int(_idx)]
-        _im = _PIe.open(Path("transistor_binary") / ("good" if _r["label"] == "good" else "bad") / _r["filename"]).convert("RGB")
+        _im = _PIe.open(Path("data/processed/transistor_binary") / ("good" if _r["label"] == "good" else "bad") / _r["filename"]).convert("RGB")
         _inp = _proc(images=_im, return_tensors="pt")
         with _T2.inference_mode():
             return _bm(**{k: v.to(_dev) for k, v in _inp.items()}).last_hidden_state[:, 0].cpu().numpy()[0]
@@ -169,9 +169,9 @@ def _(ED2, EEM, EFOLDS, ELAB, EY, Path, mo, np, pd):
     for _n in [f"bad_02{_d}.png" for _d in range(10)]:
         _ii = int(ELAB[ELAB.filename == _n].index[0])
         _r = ELAB.iloc[_ii]
-        _mp = Path("mvtec_anomaly_detection/transistor/ground_truth/damaged_case") / (_r["original_path"].split("/")[-1].replace(".png", "_mask.png"))
+        _mp = Path("data/raw/mvtec_anomaly_detection/transistor/ground_truth/damaged_case") / (_r["original_path"].split("/")[-1].replace(".png", "_mask.png"))
         _mk = np.asarray(_PIe.open(_mp).convert("L")) > 127
-        _im = _PIe.open(Path("transistor_binary/bad") / _n).convert("RGB")
+        _im = _PIe.open(Path("data/processed/transistor_binary/bad") / _n).convert("RGB")
         _g = np.asarray(_im.convert("L"), dtype=np.float32)
         _z = _cls(_ii)
         _dist = float(np.linalg.norm(_z - _C))
@@ -179,8 +179,8 @@ def _(ED2, EEM, EFOLDS, ELAB, EY, Path, mo, np, pd):
             "contrast": round(_g.std(), 1), "dino": round(float(ED2[_ii]), 3), "em": round(float(EEM[_ii]), 3),
             "fused": round(_amask[_ii][0], 2), "caught": bool(_amask[_ii][1]), "cls_dist": round(_dist, 2)})
     ee_aut = pd.DataFrame(_rows)
-    _b22 = _PIe.open(Path("transistor_binary/bad/bad_022.png")).convert("RGB").resize((320, 320))
-    _m22 = _PIe.open(Path("mvtec_anomaly_detection/transistor/ground_truth/damaged_case/002_mask.png")).convert("L").resize((320, 320))
+    _b22 = _PIe.open(Path("data/processed/transistor_binary/bad/bad_022.png")).convert("RGB").resize((320, 320))
+    _m22 = _PIe.open(Path("data/raw/mvtec_anomaly_detection/transistor/ground_truth/damaged_case/002_mask.png")).convert("L").resize((320, 320))
     mo.vstack([mo.md("### bad_022 vs damaged_case (area de mascara %, brillo, distancia CLS, veredicto fused)"), mo.hstack([mo.image(_b22, width=280, caption="bad_022"), mo.image(_m22, width=280, caption="mask 002")]), ee_aut])
     return (ee_aut,)
 
@@ -194,7 +194,7 @@ def _(ee_aut, ee_rows):
     import mlflow
     from mlflow.tracking import MlflowClient as _MCe
     from pathlib import Path as _Pe
-    _fe = _Pe("mlfigs_faseE")
+    _fe = _Pe("reports/figures/mlfigs_faseE")
     _fe.mkdir(exist_ok=True)
     _xs = list(range(len(ee_rows)))
     _fg, _ax = plt.subplots(figsize=(8, 3))
@@ -206,14 +206,14 @@ def _(ee_aut, ee_rows):
     _ax.set_title("E1 sweep de cortes (pooled OOF, train-only)")
     _fg.savefig(_fe / "sweep_cuts.png", dpi=100)
     plt.close(_fg)
-    _b22i = Image.open(_Pe("transistor_binary/bad/bad_022.png")).convert("RGB").resize((280, 280))
-    _m22i = Image.open(_Pe("mvtec_anomaly_detection/transistor/ground_truth/damaged_case/002_mask.png")).convert("RGB").resize((280, 280))
+    _b22i = Image.open(_Pe("data/processed/transistor_binary/bad/bad_022.png")).convert("RGB").resize((280, 280))
+    _m22i = Image.open(_Pe("data/raw/mvtec_anomaly_detection/transistor/ground_truth/damaged_case/002_mask.png")).convert("RGB").resize((280, 280))
     _sh = Image.new("RGB", (560, 300), "white")
     _sh.paste(_b22i, (0, 20))
     _sh.paste(_m22i, (280, 20))
     _sh.save(_fe / "autopsia_bad022.png")
-    ee_rows.to_csv("fase_e_sweep.csv", index=False)
-    ee_aut.to_csv("fase_e_autopsia.csv", index=False)
+    ee_rows.to_csv("reports/fase_e_sweep.csv", index=False)
+    ee_aut.to_csv("reports/fase_e_autopsia.csv", index=False)
     mlflow.set_tracking_uri("sqlite:///mlflow.db")
     mlflow.set_experiment("transistor-binary")
     _rn = "faseE_calibracion"
@@ -222,10 +222,10 @@ def _(ee_aut, ee_rows):
     with _cm:
         mlflow.log_params({"base": "D-alpha-frozen", "objective": "recall>=0.95,FAR<=0.05", "cands": 8,
             "verdict": "keep-5.5pct", "bad022_mask_pct": 0.63, "bad022_hyp": "defecto-mas-pequeno-diluye-score"})
-        mlflow.log_artifact("fase_e_sweep.csv")
-        mlflow.log_artifact("fase_e_autopsia.csv")
-        mlflow.log_artifact("mlfigs_faseE/sweep_cuts.png")
-        mlflow.log_artifact("mlfigs_faseE/autopsia_bad022.png")
+        mlflow.log_artifact("reports/fase_e_sweep.csv")
+        mlflow.log_artifact("reports/fase_e_autopsia.csv")
+        mlflow.log_artifact("reports/figures/mlfigs_faseE/sweep_cuts.png")
+        mlflow.log_artifact("reports/figures/mlfigs_faseE/autopsia_bad022.png")
         print("mlflow faseE ok", flush=True)
     return
 
@@ -245,7 +245,7 @@ def _(mo):
 @app.cell
 def _(Path, mo):
     _order = ["sweep_cuts.png", "autopsia_bad022.png"]
-    _ims = [mo.image(str((Path("mlfigs_faseE") / _p).resolve()), width=560, caption=_p) for _p in _order if (Path("mlfigs_faseE") / _p).exists()]
+    _ims = [mo.image(str((Path("reports/figures/mlfigs_faseE") / _p).resolve()), width=560, caption=_p) for _p in _order if (Path("reports/figures/mlfigs_faseE") / _p).exists()]
     mo.vstack([mo.md(f"### Galeria E ({len(_ims)}/{len(_order)})"), mo.hstack(_ims)])
     return
 
