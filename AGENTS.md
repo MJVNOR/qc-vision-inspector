@@ -73,6 +73,9 @@ imbalanced: `data/processed/transistor_binary/{good:273, bad:40}` + `labels.csv`
   never re-derive via ad-hoc SDK queries when an MCP tool exists.
   Writes go through the SDK in notebook cells ONLY because the MCP has no
   `log_metric`/`log_artifact` tools.
+- Canonical metric names (a run may carry legacy duplicates from renames;
+  always query these): `Dalpha_*` (not `dalpha_*`) in `faseF_local`;
+  `thr5_*_mean` in fase A/B/C runs.
 
 ## Models
 
