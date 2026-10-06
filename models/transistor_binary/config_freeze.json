@@ -44,5 +44,5 @@
  "mlflow_experiment": "transistor_binary",
  "effad_ckpt": "models/efficientad_em.ckpt",
  "effad_onnx": "models\\transistor_binary\\onnx\\efficientad.onnx",
- "mlflow_run_id": "b8c636a924054840af43666be8c7aed0"
+ "mlflow_run_id": "2a8917b3344d417fa8cc844e95d23cdf"
 }
