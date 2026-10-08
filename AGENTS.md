@@ -101,3 +101,6 @@ imbalanced: `data/processed/transistor_binary/{good:273, bad:40}` + `labels.csv`
 - `torch.load` defaults `weights_only=True` (torch≥2.6) and chokes on numpy
   payloads: own cache files (e.g. `models/fase_a_emb.pt`) load with
   `weights_only=False`.
+- Logging is NEVER disabled: every `Engine`/`Trainer` runs with `logger=True`
+  (no `logger=False` anywhere). Long GPU runs must be watchable live
+  (progress bar + `light_logs/` metrics), never black-box.

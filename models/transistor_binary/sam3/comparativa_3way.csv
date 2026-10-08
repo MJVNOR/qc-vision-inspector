@@ -1,0 +1,16 @@
+variant,method,auroc,recall,far
+none,dino,0.991,0.925,0.051
+none,effad,0.9676,0.9,0.051
+none,local,0.9683,0.825,0.051
+none,fusion,0.9955,1.0,0.051
+none,rescue,,1.0,0.062
+crop,dino,0.9838,0.925,0.051
+crop,effad,0.9315,0.85,0.051
+crop,local,0.9895,1.0,0.051
+crop,fusion,0.9782,0.9,0.051
+crop,rescue,,0.925,0.062
+masked,dino,0.996,1.0,0.051
+masked,effad,0.8971,0.625,0.051
+masked,local,0.9816,0.9,0.051
+masked,fusion,0.9964,0.975,0.051
+masked,rescue,,1.0,0.062

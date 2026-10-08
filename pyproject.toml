@@ -12,7 +12,7 @@ dependencies = [
     "transformers>=4.56",
     "timm",
     "scikit-learn",
-    "mlflow[mcp]>=3.5.1",
+    "mlflow[mcp]>=3.17",
     "optuna>=5.0.0",
     "anomalib>=2.6.2",
     "skl2onnx>=1.20.0",
@@ -22,6 +22,7 @@ dependencies = [
     "nbformat>=5.11.1",
     "nbconvert>=7.17.1",
     "ipykernel>=7.4.0",
+    "onnxscript>=0.7.2",
 ]
 
 [[tool.uv.index]]
