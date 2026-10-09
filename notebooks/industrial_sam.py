@@ -742,6 +742,106 @@ def _(FIG_DIR, MODELS_DIR, mo, np, pd, plt, tic, toc):
 
 
 @app.cell(hide_code=True)
+def explain(
+    FIG_DIR,
+    Image,
+    MODELS_DIR,
+    mo,
+    np,
+    plt,
+    test_files,
+    tic,
+    toc,
+    torch,
+):
+    # Proposito: explicabilidad EffAD (mapa de anomalia sobre las BAD de test). Solo muestra.
+    tic("explain")
+    import glob as _gb9
+    from anomalib.models import EfficientAd as _EA9
+    _ckpt9 = sorted(_gb9.glob(str(MODELS_DIR / "effad/**/*.ckpt"), recursive=True))[-1]
+    _em9 = _EA9.load_from_checkpoint(_ckpt9, map_location="cpu").eval()
+    _dev9 = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    _em9.to(_dev9)
+    print("ckpt:", _ckpt9, flush=True)
+    _bads9 = test_files[test_files.label == "bad"].itertuples()
+    _blist = list(_bads9)
+    _fx, _axx = plt.subplots(len(_blist), 3, figsize=(9, 2.6 * len(_blist)))
+    _fx.patch.set_facecolor("white")
+    for _k, _r in enumerate(_blist):
+        _im0 = Image.open(_r.path).convert("RGB")
+        _xb = torch.from_numpy(np.asarray(_im0.resize((256, 256)), dtype="float32") / 255.0).permute(2, 0, 1).unsqueeze(0).to(_dev9)
+        with torch.inference_mode():
+            _out = _em9(_xb)
+            _amap = _out.anomaly_map.squeeze().cpu().numpy()
+            _sc = float(_out.pred_score.flatten()[0])
+        _row = _axx[_k] if len(_blist) > 1 else _axx
+        _row[0].imshow(_im0)
+        _row[0].set_title(_r.filename, fontsize=8, color="black")
+        _row[1].imshow(_amap, cmap="jet")
+        _row[1].set_title(f"mapa score={_sc:.3f}", fontsize=8, color="black")
+        _row[2].imshow(_im0.resize((256, 256)))
+        _row[2].imshow(_amap, cmap="jet", alpha=0.5)
+        _row[2].set_title("overlay", fontsize=8, color="black")
+        [a.axis("off") for a in _row]
+        if (_k + 1) % 4 == 0:
+            print(f"explain {_k + 1}/{len(_blist)}", flush=True)
+    _fx.suptitle("EffAD: donde mira el modelo (8 BAD test)", fontsize=12, color="black")
+    _fx.subplots_adjust(wspace=0.05, hspace=0.35, top=0.94)
+    _fx.savefig(FIG_DIR / "explain_effad.png", dpi=90)
+    print("saved explain_effad.png")
+    _em9.to("cpu"); torch.cuda.empty_cache()
+    toc("explain")
+    mo.vstack([_fx])
+    return
+
+
+@app.cell(hide_code=True)
+def explain_dino(
+    FIG_DIR,
+    Image,
+    MODELS_DIR,
+    df_files,
+    mo,
+    np,
+    plt,
+    tic,
+    toc,
+    torch,
+):
+    # Proposito: explicabilidad DINO por vecinos cercanos (por que decidio BAD: a que trains se parece). Solo muestra.
+    tic("explain_dino")
+    _dz9 = np.load(MODELS_DIR / "dino.npz")
+    _X9 = torch.load(MODELS_DIR / "dino_masked.pt", map_location="cpu", weights_only=False)["X"]
+    _fn9 = list(_dz9["fnames"])
+    _te9 = list(_dz9["test_idx"])
+    _laball = (df_files.set_index("filename").loc[_fn9, "label"] == "bad").to_numpy(int)
+    _pathof = dict(zip(df_files.filename, df_files.path))
+    _bad_te = [i for i in _te9 if _laball[i] == 1][:6]
+    _Xn = _X9 / np.linalg.norm(_X9, axis=1, keepdims=True)
+    _fx9, _axx9 = plt.subplots(len(_bad_te), 4, figsize=(10, 2.2 * len(_bad_te)))
+    _fx9.patch.set_facecolor("white")
+    for _k, _i in enumerate(_bad_te):
+        _d = 1 - _Xn[_i] @ _Xn.T
+        _d[_i] = 9
+        _nn = np.argsort(_d)[:3]
+        _row = _axx9[_k] if len(_bad_te) > 1 else _axx9
+        _row[0].imshow(Image.open(_pathof[_fn9[_i]]).convert("RGB"))
+        _row[0].set_title(_fn9[_i] + " TEST-BAD", fontsize=8, color="black")
+        for _j, _n in enumerate(_nn):
+            _tag = "BAD" if _laball[_n] else "good"
+            _row[_j + 1].imshow(Image.open(_pathof[_fn9[_n]]).convert("RGB"))
+            _row[_j + 1].set_title(_fn9[_n] + " " + _tag + " d=" + format(float(_d[_n]), ".2f"), fontsize=8, color="black")
+        [a.axis("off") for a in _row]
+    _fx9.suptitle("DINO: cada BAD-test y sus 3 vecinos train (coseno)", fontsize=12, color="black")
+    _fx9.subplots_adjust(wspace=0.05, hspace=0.4, top=0.93)
+    _fx9.savefig(FIG_DIR / "explain_dino.png", dpi=90)
+    print("saved explain_dino.png")
+    toc("explain_dino")
+    mo.vstack([_fx9])
+    return
+
+
+@app.cell(hide_code=True)
 def figs_dist(FIG_DIR, MODELS_DIR, mo, np, plt, tic, toc):
     # Proposito: 4 figuras diagnosticas test (distribuciones, ROC, strip por clase, scatter dino-vs-effad). Solo muestra.
     tic("figs_dist")
