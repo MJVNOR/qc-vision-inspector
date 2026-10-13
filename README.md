@@ -17,6 +17,18 @@ Binary visual defect detector (`good` / `bad`) for industrial quality control, b
 
 DINOv3 variants were evaluated as gated backbones but DINOv2-base (public) won on stability and stayed the production pick.
 
+## Production run (SAM3.1, single 80/20 split, 250 train / 63 test)
+
+`notebooks/industrial_sam31.py` (SAM3.1 `sam3.1_multiplex.pt` + DINOv2-masked + EfficientAD-medium 5000 steps + alpha fusion, `models/transistor_binary/prod_sam31/`):
+
+| Method | AUROC | Recall (BAD) | FAR | Notes |
+|--------|-------|--------------|-----|-------|
+| DINO-masked + LogReg | 0.9977 | 1.000 | 0.109 | Best single arm; cut q95 train-GOOD |
+| EfficientAD (original) | 0.9773 | 0.875 | 0.091 | Lowest FAR |
+| Fusion (alpha=0.05) | 0.9955 | 1.000 | 0.127 | EffAD-dominated; McNemar dino-vs-fused p=1.0 |
+
+SAM runs lazy with `unload_sam()` after viz (7.2 GB → 0.01 GB VRAM) so DINO/EffAD train uncontended; §8 reloads it transparently for live inference. Demo: GOOD→GOOD, BAD→BAD.
+
 ## Dataset
 
 `data/processed/transistor_binary/` (tracked with Git LFS) is derived from [MVTec AD](https://www.mvtec.com/company/research/datasets/mvtec-ad) `transistor`:
@@ -55,6 +67,8 @@ Metrics/CSVs land in `reports/`, figures in `reports/figures/`, model files in `
 | `fase_g.py` | Robustness: repeated 5×5 CV + inference stress | `reports/fase_g_repeated.csv`, `reports/fase_g_stress.csv` |
 | `fase_h.py` | Geometric norm (`data/interim/transistor_norm/`) + TTA eval | `reports/fase_h_repeated.csv`, `reports/fase_h_tta.csv` |
 | `industrial_master.py` | **Reusable GOOD/BAD template** consolidating the A–H winner (DINOv2 + LogReg + EfficientAD-medium + D-alpha + local q99 rescue). Also exported as `industrial_master.ipynb` | `models/<project>/` (cache, OOF, `onnx/`, `config_freeze.json`), `reports/figures/<project>/` |
+| `industrial_sam.py` | SAM3 + DINO-masked + EffAD-original + fusion, ONNX export | `models/transistor_binary/prod/` |
+| `industrial_sam31.py` | SAM3.1 multiplex (ultralytics) variant of the above, lazy VRAM. Also exported as `industrial_sam31.ipynb` | `models/transistor_binary/prod_sam31/`, `reports/figures/transistor_binary_sam31/` |
 
 Reuse with a new part: point `PROJECT_NAME`/`DATASET_DIR` (§1) at `dataset/{labels.csv,good/,bad/}` — everything else (splits, train-only calibration, namespaced caches, MLflow-by-name) is generic. Current verdict on transistor (repeated 5×5): rescue BAD recall **1.000±0.000** (25/25 folds), FAR **0.097** → below the default pilot bar, see summary cell.
 
