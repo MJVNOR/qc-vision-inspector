@@ -1,0 +1,71 @@
+{
+  "source": "industrial_sam.py \u00a71 + \u00a78",
+  "environment": {
+    "kernel_pid": 42592,
+    "cwd": "C:\\Users\\marti\\Documents\\BetterClasificator",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "torch": "2.11.0+cu128",
+    "torch_cuda": "12.8",
+    "cuda_available": true,
+    "gpu": "NVIDIA GeForce RTX 4070 Laptop GPU",
+    "onnxruntime": "1.30.0",
+    "ort_providers": [
+      "AzureExecutionProvider",
+      "CPUExecutionProvider"
+    ],
+    "nsys": "C:\\Program Files\\NVIDIA Corporation\\Nsight Systems 2023.4.4\\target-windows-x64\\nsys.exe"
+  },
+  "runtime": {
+    "cpu_logical_count": 16,
+    "torch_intra_threads": 10,
+    "torch_inter_threads": 10,
+    "ort_default_intra_threads": 0,
+    "ort_default_inter_threads": 0,
+    "ort_execution_mode": "ExecutionMode.ORT_SEQUENTIAL",
+    "ort_graph_optimization": "GraphOptimizationLevel.ORT_ENABLE_ALL",
+    "onnx_providers": [
+      "CPUExecutionProvider"
+    ],
+    "kernel_pid": 42592,
+    "administrator": true,
+    "thread_environment": {
+      "OMP_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null
+    }
+  },
+  "windows_cpu": {
+    "query_success": true,
+    "control_mask": 0,
+    "state_mask": 0,
+    "ecoqos_explicit": false,
+    "plan": "",
+    "cpu_max": ""
+  },
+  "capture_requested": true,
+  "trace_validated": true,
+  "nsys_executable": "C:\\Users\\marti\\.cache\\qc-vision-tools\\nsight-systems-2025.1.3.140\\extracted\\nsight_systems-windows-x86_64-2025.1.3.140-archive\\nsight-systems\\2025.1.3\\target-windows-x64\\nsys.exe",
+  "nsys_version": "NVIDIA Nsight Systems version 2025.1.3.140-251335620677v0\n",
+  "flush_denormal": false,
+  "effad_threads": 0,
+  "synchronized_stage_timing": false,
+  "frames": 2,
+  "configuration": {
+    "source": "industrial_sam.py \u00a71 + \u00a78",
+    "backbone": "facebook/dinov2-base",
+    "sam_checkpoint": "facebook/sam3",
+    "prompt": "transistor",
+    "seed": 42,
+    "batch_size": 1,
+    "images_per_class": 5,
+    "warmup_frames": 3,
+    "repeats": 3,
+    "precision": "float32",
+    "ort_providers": [
+      "CPUExecutionProvider"
+    ],
+    "scenario": "resident_models_reference_section8",
+    "sampling": "balanced subset of frozen test split; not production prevalence"
+  },
+  "predictions_equivalent": true
+}

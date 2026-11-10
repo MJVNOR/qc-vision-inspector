@@ -1,0 +1,15 @@
+{
+  "status": "ready",
+  "external_jobs_complete": true,
+  "original_models_restored": "cuda",
+  "sam_device": "cuda:0",
+  "dino_device": "cuda:0",
+  "gpu_allocated_gb": 3.846209536,
+  "gpu_reserved_gb": 3.992977408,
+  "closed_logs": [
+    "captures",
+    "debug",
+    "probe"
+  ],
+  "reused_model_instances": true
+}

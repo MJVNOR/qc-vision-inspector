@@ -1,0 +1,20 @@
+
+NOTICE: Existing SQLite export found: C:\Users\marti\Documents\BetterClasificator\reports\profiling\transistor_binary\nsight_reference_20261031T235032_944311Z\capture.sqlite
+        It is assumed file was previously exported from: C:\Users\marti\Documents\BetterClasificator\reports\profiling\transistor_binary\nsight_reference_20261031T235032_944311Z\capture.nsys-rep
+        Consider using --force-export=true if needed.
+
+Processing [C:\Users\marti\Documents\BetterClasificator\reports\profiling\transistor_binary\nsight_reference_20261031T235032_944311Z\capture.sqlite] with [C:\Users\marti\.cache\qc-vision-tools\nsight-systems-2025.1.3.140\extracted\nsight_systems-windows-x86_64-2025.1.3.140-archive\nsight-systems\2025.1.3\host-windows-x64\reports\cuda_api_sum.py]... 
+Time (%),Total Time (ns),Num Calls,Avg (ns),Med (ns),Min (ns),Max (ns),StdDev (ns),Name
+41.8,1810924772,1,1810924772.0,1810924772.0,1810924772,1810924772,0.0,cudaProfilerStart
+40.7,1764519335,58,30422747.2,34922.5,4901,810177190,146423295.0,cudaStreamSynchronize
+15.8,683475547,5756,118741.4,12934.5,4871,47174354,1450040.9,cudaLaunchKernel
+0.7,28247623,622,45414.2,20686.5,666,13433676,537939.7,cudaMemsetAsync
+0.5,22104225,10,2210422.5,10637.0,6269,13698326,4808813.9,cudaLaunchKernelExC_v11060
+0.3,13601639,148,91903.0,29945.0,8720,3103256,341693.8,cudaMemcpyAsync
+0.2,7436750,10,743675.0,13259.5,7828,7303032,2304733.1,cuLaunchKernel
+0.0,494799,227,2179.7,1651.0,513,21374,1930.6,cudaStreamIsCapturing_v10000
+0.0,396538,1,396538.0,396538.0,396538,396538,0.0,cudaMalloc
+0.0,25395,10,2539.5,2476.0,1439,3666,751.7,cuKernelGetFunction
+0.0,17212,1,17212.0,17212.0,17212,17212,0.0,cudaDeviceSynchronize
+
+

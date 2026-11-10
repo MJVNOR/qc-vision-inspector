@@ -1,0 +1,25 @@
+{
+  "trace": "C:\\Users\\marti\\Documents\\BetterClasificator\\reports\\profiling\\transistor_binary\\tool_probe_20261031T231039_889553Z\\probe.nsys-rep",
+  "sqlite_exists": true,
+  "stats": {
+    "nvtx_sum": {
+      "exit_code": 0,
+      "text": "Generating SQLite file C:\\Users\\marti\\Documents\\BetterClasificator\\reports\\profiling\\transistor_binary\\tool_probe_20261031T231039_889553Z\\probe.sqlite from C:\\Users\\marti\\Documents\\BetterClasificator\\reports\\profiling\\transistor_binary\\tool_probe_20261031T231039_889553Z\\probe.nsys-rep\nProcessing [C:\\Users\\marti\\Documents\\BetterClasificator\\reports\\profiling\\transistor_binary\\tool_probe_20261031T231039_889553Z\\probe.sqlite] with [C:\\Program Files\\NVIDIA Corporation\\Nsight Systems 2023.4.4\\host-windows-x64\\reports\\nvtx_sum.py]... \nTime (%),Total Time (ns),Instances,Avg (ns),Med (ns),Min (ns),Max (ns),StdDev (ns),Style,Range\n100.0,414719,1,414719.0,414719.0,414719,414719,0.0,PushPop,inspect/tool_probe\n\n\n"
+    },
+    "cuda_gpu_kern_sum": {
+      "exit_code": 0,
+      "text": "\nNOTICE: Existing SQLite export found: C:\\Users\\marti\\Documents\\BetterClasificator\\reports\\profiling\\transistor_binary\\tool_probe_20261031T231039_889553Z\\probe.sqlite\n        It is assumed file was previously exported from: C:\\Users\\marti\\Documents\\BetterClasificator\\reports\\profiling\\transistor_binary\\tool_probe_20261031T231039_889553Z\\probe.nsys-rep\n        Consider using --force-export=true if needed.\n\nProcessing [C:\\Users\\marti\\Documents\\BetterClasificator\\reports\\profiling\\transistor_binary\\tool_probe_20261031T231039_889553Z\\probe.sqlite] with [C:\\Program Files\\NVIDIA Corporation\\Nsight Systems 2023.4.4\\host-windows-x64\\reports\\cuda_gpu_kern_sum.py]... \nTime (%),Total Time (ns),Instances,Avg (ns),Med (ns),Min (ns),Max (ns),StdDev (ns),Name\n63.5,4448,1,4448.0,4448.0,4448,4448,0.0,ampere_sgemm_64x32_sliced1x4_nn\n36.5,2560,1,2560.0,2560.0,2560,2560,0.0,\"void cublasLt::splitKreduce_kernel<(int)32, (int)16, int, float, float, float, float, (bool)0, float, float, float, (bool)1, (bool)0, (bool)0>(cublasLt::cublasSplitKParams<T6>, const T4 *, const T10 *, T9 *, T5 *, const T6 *, const T6 *, const T11 *, const T4 *, T11 *, void *, long long, T6 *, int *, T6 *, T6 *, const T6 *, const T6 *, const T6 *, const T6 *, const T6 *)\"\n\n\n"
+    },
+    "cuda_api_sum": {
+      "exit_code": 0,
+      "text": "\nNOTICE: Existing SQLite export found: C:\\Users\\marti\\Documents\\BetterClasificator\\reports\\profiling\\transistor_binary\\tool_probe_20261031T231039_889553Z\\probe.sqlite\n        It is assumed file was previously exported from: C:\\Users\\marti\\Documents\\BetterClasificator\\reports\\profiling\\transistor_binary\\tool_probe_20261031T231039_889553Z\\probe.nsys-rep\n        Consider using --force-export=true if needed.\n\nProcessing [C:\\Users\\marti\\Documents\\BetterClasificator\\reports\\profiling\\transistor_binary\\tool_probe_20261031T231039_889553Z\\probe.sqlite] with [C:\\Program Files\\NVIDIA Corporation\\Nsight Systems 2023.4.4\\host-windows-x64\\reports\\cuda_api_sum.py]... \nTime (%),Total Time (ns),Num Calls,Avg (ns),Med (ns),Min (ns),Max (ns),StdDev (ns),Name\n100.0,5043748371,1,5043748371.0,5043748371.0,5043748371,5043748371,0.0,cudaProfilerStart\n0.0,138960,2,69480.0,69480.0,31065,107895,54327.0,cudaLaunchKernel\n0.0,23839,1,23839.0,23839.0,23839,23839,0.0,cudaDeviceSynchronize\n0.0,7024,1,7024.0,7024.0,7024,7024,0.0,cudaOccupancyMaxActiveBlocksPerMultiprocessor\n\n\n"
+    }
+  },
+  "cuda_kernel_count": 2,
+  "cuda_kernels_ms": 0.007008,
+  "inspect_ranges": [
+    "inspect/tool_probe"
+  ],
+  "expected_range_found": true,
+  "trace_validated": true
+}

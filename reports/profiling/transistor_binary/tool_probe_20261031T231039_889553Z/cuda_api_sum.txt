@@ -1,0 +1,13 @@
+
+NOTICE: Existing SQLite export found: C:\Users\marti\Documents\BetterClasificator\reports\profiling\transistor_binary\tool_probe_20261031T231039_889553Z\probe.sqlite
+        It is assumed file was previously exported from: C:\Users\marti\Documents\BetterClasificator\reports\profiling\transistor_binary\tool_probe_20261031T231039_889553Z\probe.nsys-rep
+        Consider using --force-export=true if needed.
+
+Processing [C:\Users\marti\Documents\BetterClasificator\reports\profiling\transistor_binary\tool_probe_20261031T231039_889553Z\probe.sqlite] with [C:\Program Files\NVIDIA Corporation\Nsight Systems 2023.4.4\host-windows-x64\reports\cuda_api_sum.py]... 
+Time (%),Total Time (ns),Num Calls,Avg (ns),Med (ns),Min (ns),Max (ns),StdDev (ns),Name
+100.0,5043748371,1,5043748371.0,5043748371.0,5043748371,5043748371,0.0,cudaProfilerStart
+0.0,138960,2,69480.0,69480.0,31065,107895,54327.0,cudaLaunchKernel
+0.0,23839,1,23839.0,23839.0,23839,23839,0.0,cudaDeviceSynchronize
+0.0,7024,1,7024.0,7024.0,7024,7024,0.0,cudaOccupancyMaxActiveBlocksPerMultiprocessor
+
+

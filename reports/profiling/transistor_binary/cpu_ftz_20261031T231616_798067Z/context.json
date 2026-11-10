@@ -1,0 +1,13 @@
+{
+  "status": "complete",
+  "flush_denormal": true,
+  "spinning": false,
+  "source": "industrial_sam.py \u00a71 + \u00a78",
+  "reference_path": "C:\\Users\\marti\\Documents\\BetterClasificator\\reports\\profiling\\transistor_binary\\20261031T131449_487581Z",
+  "weights_modified": false,
+  "concurrent_unoptimized_baseline": true,
+  "note": "FTZ changes treatment of subnormal arithmetic; verify scores/decisions before adopting.",
+  "selected_threads": 4,
+  "calls": 12,
+  "seconds": 132.2307499999879
+}

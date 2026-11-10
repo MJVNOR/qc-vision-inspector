@@ -1,0 +1,20 @@
+{
+  "status": "cancelled",
+  "protocol": "same GOOD image, one warmup + one timed call per configuration",
+  "threads_order": [
+    4,
+    2,
+    1
+  ],
+  "spinning": false,
+  "inter_threads": 1,
+  "execution": "ORT_SEQUENTIAL",
+  "background_worker": true,
+  "expected_calls": 6,
+  "source": "industrial_sam.py EffAD input recipe",
+  "active_threads": 2,
+  "active_trial": 0,
+  "error": "CancelledError('Ampliaci\u00f3n sin FTZ cancelada antes de una nueva llamada nativa.')",
+  "cancel_reason": "Original 30-frame baseline already saved; stop redundant slow expansion after subnormal diagnosis.",
+  "guard_restored": true
+}

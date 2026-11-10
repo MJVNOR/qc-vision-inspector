@@ -1,0 +1,26 @@
+
+NOTICE: Existing SQLite export found: C:\Users\marti\Documents\BetterClasificator\reports\profiling\transistor_binary\nsight_reference_20261031T235032_944311Z\capture.sqlite
+        It is assumed file was previously exported from: C:\Users\marti\Documents\BetterClasificator\reports\profiling\transistor_binary\nsight_reference_20261031T235032_944311Z\capture.nsys-rep
+        Consider using --force-export=true if needed.
+
+Processing [C:\Users\marti\Documents\BetterClasificator\reports\profiling\transistor_binary\nsight_reference_20261031T235032_944311Z\capture.sqlite] with [C:\Users\marti\.cache\qc-vision-tools\nsight-systems-2025.1.3.140\extracted\nsight_systems-windows-x86_64-2025.1.3.140-archive\nsight-systems\2025.1.3\host-windows-x64\reports\nvtx_sum.py]... 
+Time (%),Total Time (ns),Instances,Avg (ns),Med (ns),Min (ns),Max (ns),StdDev (ns),Style,Range
+33.3,10680405756,1,10680405756.0,10680405756.0,10680405756,10680405756,0.0,PushPop,:inspect/capture
+33.3,10673676227,2,5336838113.5,5336838113.5,5096671114,5577005113,339647427.9,PushPop,:inspect/frame
+23.5,7541961810,2,3770980905.0,3770980905.0,3523544358,4018417452,349928120.6,PushPop,:inspect/efficientad_cpu
+8.6,2750559969,2,1375279984.5,1375279984.5,1361180028,1389379941,19940349.7,PushPop,:inspect/sam
+0.3,87581999,2,43790999.5,43790999.5,39352131,48229868,6277508.0,PushPop,:inspect/load_decode
+0.2,63517131,2,31758565.5,31758565.5,14805751,48711380,23974900.2,PushPop,:inspect/sam_preprocess
+0.2,57559595,2,28779797.5,28779797.5,24763901,32795694,5679335.3,PushPop,:inspect/mask_crop
+0.2,55869019,2,27934509.5,27934509.5,20937367,34931652,9895453.8,PushPop,:inspect/dinov2
+0.1,47058359,2,23529179.5,23529179.5,21683366,25374993,2610374.5,PushPop,:inspect/sam_postprocess
+0.1,42157709,2,21078854.5,21078854.5,20842184,21315525,334702.6,PushPop,:inspect/effad_preprocess
+0.0,15764106,2,7882053.0,7882053.0,6453444,9310662,2020358.2,PushPop,:inspect/dino_preprocess
+0.0,6317638,2,3158819.0,3158819.0,3148196,3169442,15023.2,PushPop,:inspect/sam_h2d
+0.0,2009366,2,1004683.0,1004683.0,949632,1059734,77853.9,PushPop,:inspect/effad_gpu_roundtrip
+0.0,977886,2,488943.0,488943.0,432726,545160,79502.8,PushPop,:inspect/dino_h2d
+0.0,526340,2,263170.0,263170.0,217321,309019,64840.3,PushPop,:inspect/dino_d2h
+0.0,454191,2,227095.5,227095.5,204087,250104,32538.9,PushPop,:inspect/logreg
+0.0,102763,2,51381.5,51381.5,48849,53914,3581.5,PushPop,:inspect/fusion
+
+

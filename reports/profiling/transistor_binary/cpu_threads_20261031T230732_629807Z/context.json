@@ -1,0 +1,29 @@
+{
+  "context": {
+    "cpu_logical_count": 16,
+    "torch_intra_threads": 10,
+    "torch_inter_threads": 10,
+    "ort_default_intra_threads": 0,
+    "ort_default_inter_threads": 0,
+    "ort_execution_mode": "ExecutionMode.ORT_SEQUENTIAL",
+    "ort_graph_optimization": "GraphOptimizationLevel.ORT_ENABLE_ALL",
+    "onnx_providers": [
+      "CPUExecutionProvider"
+    ],
+    "kernel_pid": 4660,
+    "administrator": true,
+    "thread_environment": {
+      "OMP_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null
+    }
+  },
+  "completed": false,
+  "expected_calls": 24,
+  "observed_calls": 1,
+  "score_tolerance": {
+    "rtol": 0.0001,
+    "atol": 1e-06
+  },
+  "note": "EfficientAD CPU only; excludes decode, transfers and other models. Explicit thread variants; not reference end-to-end latency."
+}

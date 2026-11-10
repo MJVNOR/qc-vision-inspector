@@ -1,0 +1,7 @@
+Capture range started in the application.
+Capture range ended in the application.
+Generating 'C:\Users\marti\AppData\Local\Temp\nsys-report-1e3c.qdstrm'
+[1/1] [0%                          ] capture.nsys-repProcessing events...
+[1/1] [0%                          ] capture.nsys-rep[1/1] [===========51%              ] capture.nsys-rep[1/1] [===============65%          ] capture.nsys-rep[1/1] [========================100%] capture.nsys-rep[1/1] [========================100%] capture.nsys-rep
+Generated:
+	C:\Users\marti\Documents\BetterClasificator\reports\profiling\transistor_binary\nsight_ftz_20261031T234733_579588Z\capture.nsys-rep

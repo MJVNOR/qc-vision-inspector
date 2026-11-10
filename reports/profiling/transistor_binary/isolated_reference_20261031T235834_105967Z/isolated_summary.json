@@ -1,0 +1,41 @@
+{
+  "status": "complete",
+  "profiler": false,
+  "nvtx_during_measurement": false,
+  "flush_denormal": false,
+  "effad_threads": 0,
+  "unique_images": 2,
+  "measurements": 4,
+  "warmup_calls": 2,
+  "median_ms": 143091.84120000282,
+  "mean_ms": 139650.23980000115,
+  "min_ms": 126749.670899997,
+  "max_ms": 145667.60590000194,
+  "peak_allocated_gb": 4.373686784,
+  "predictions_equivalent": true,
+  "environment": {
+    "kernel_pid": 64044,
+    "cwd": "C:\\Users\\marti\\Documents\\BetterClasificator",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "torch": "2.11.0+cu128",
+    "torch_cuda": "12.8",
+    "cuda_available": true,
+    "gpu": "NVIDIA GeForce RTX 4070 Laptop GPU",
+    "onnxruntime": "1.30.0",
+    "ort_providers": [
+      "AzureExecutionProvider",
+      "CPUExecutionProvider"
+    ],
+    "nsys": "C:\\Program Files\\NVIDIA Corporation\\Nsight Systems 2023.4.4\\target-windows-x64\\nsys.exe"
+  },
+  "windows_cpu": {
+    "query_success": true,
+    "control_mask": 0,
+    "state_mask": 0,
+    "ecoqos_explicit": false,
+    "plan": "Power Scheme GUID: 64a64f24-65b9-4b56-befd-5ec1eaced9b3  (Silent)",
+    "cpu_max": "Power Scheme GUID: 64a64f24-65b9-4b56-befd-5ec1eaced9b3  (Silent)\n  Subgroup GUID: 54533251-82be-4824-96c1-47b60b740d00  (Processor power management)\n    GUID Alias: SUB_PROCESSOR\n    Power Setting GUID: bc5038f7-23e0-4960-96da-33abaf5935ec  (Maximum processor state)\n      GUID Alias: PROCTHROTTLEMAX\n      Minimum Possible Setting: 0x00000000\n      Maximum Possible Setting: 0x00000064\n      Possible Settings increment: 0x00000001\n      Possible Settings units: %\n    Current AC Power Setting Index: 0x00000064\n    Current DC Power Setting Index: 0x00000064\n\n"
+  },
+  "source": "industrial_sam.py \u00a71 + \u00a78",
+  "note": "Two unique test images, two measured repetitions each; descriptive timings, no robust p95."
+}

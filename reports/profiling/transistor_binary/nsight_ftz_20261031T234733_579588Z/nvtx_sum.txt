@@ -1,0 +1,22 @@
+Generating SQLite file C:\Users\marti\Documents\BetterClasificator\reports\profiling\transistor_binary\nsight_ftz_20261031T234733_579588Z\capture.sqlite from C:\Users\marti\Documents\BetterClasificator\reports\profiling\transistor_binary\nsight_ftz_20261031T234733_579588Z\capture.nsys-rep
+Processing [C:\Users\marti\Documents\BetterClasificator\reports\profiling\transistor_binary\nsight_ftz_20261031T234733_579588Z\capture.sqlite] with [C:\Users\marti\.cache\qc-vision-tools\nsight-systems-2025.1.3.140\extracted\nsight_systems-windows-x86_64-2025.1.3.140-archive\nsight-systems\2025.1.3\host-windows-x64\reports\nvtx_sum.py]... 
+Time (%),Total Time (ns),Instances,Avg (ns),Med (ns),Min (ns),Max (ns),StdDev (ns),Style,Range
+33.4,4598325557,1,4598325557.0,4598325557.0,4598325557,4598325557,0.0,PushPop,:inspect/capture
+33.3,4592917854,2,2296458927.0,2296458927.0,2208540089,2384377765,124336013.1,PushPop,:inspect/frame
+19.7,2712371561,2,1356185780.5,1356185780.5,1274278801,1438092760,115833961.3,PushPop,:inspect/sam
+11.4,1566346922,2,783173461.0,783173461.0,780686997,785659925,3516391.1,PushPop,:inspect/efficientad_cpu
+0.6,87540038,2,43770019.0,43770019.0,35696287,51843751,11417981.3,PushPop,:inspect/load_decode
+0.5,65931325,2,32965662.5,32965662.5,30804716,35126609,3056039.8,PushPop,:inspect/mask_crop
+0.4,50079802,2,25039901.0,25039901.0,23972568,26107234,1509436.8,PushPop,:inspect/sam_postprocess
+0.3,36830892,2,18415446.0,18415446.0,14873150,21957742,5009563.0,PushPop,:inspect/sam_preprocess
+0.2,26520886,2,13260443.0,13260443.0,13118241,13402645,201104.0,PushPop,:inspect/dinov2
+0.2,23443032,2,11721516.0,11721516.0,10515072,12927960,1706169.5,PushPop,:inspect/effad_preprocess
+0.1,12893369,2,6446684.5,6446684.5,5675575,7217794,1090513.5,PushPop,:inspect/dino_preprocess
+0.1,7546127,2,3773063.5,3773063.5,1755469,5790658,2853309.5,PushPop,:inspect/sam_h2d
+0.0,1267919,2,633959.5,633959.5,582937,684982,72156.7,PushPop,:inspect/effad_gpu_roundtrip
+0.0,533453,2,266726.5,266726.5,265807,267646,1300.4,PushPop,:inspect/dino_h2d
+0.0,330601,2,165300.5,165300.5,146841,183760,26105.7,PushPop,:inspect/dino_d2h
+0.0,285768,2,142884.0,142884.0,140007,145761,4068.7,PushPop,:inspect/logreg
+0.0,88712,2,44356.0,44356.0,44334,44378,31.1,PushPop,:inspect/fusion
+
+

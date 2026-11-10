@@ -1,0 +1,152 @@
+{
+  "kernel_pid": 55984,
+  "cwd": "C:\\Users\\marti\\Documents\\BetterClasificator",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "torch": "2.11.0+cu128",
+  "torch_cuda": "12.8",
+  "cuda_available": true,
+  "gpu": "NVIDIA GeForce RTX 4070 Laptop GPU",
+  "onnxruntime": "1.30.0",
+  "ort_providers": [
+    "AzureExecutionProvider",
+    "CPUExecutionProvider"
+  ],
+  "nsys": "C:\\Program Files\\NVIDIA Corporation\\Nsight Systems 2023.4.4\\target-windows-x64\\nsys.exe"
+}
+        artifact  exists    bytes
+   good_mean.npy    True  3145856
+      fusion.npz    True    29486
+dino_logreg.onnx    True     8049
+      effad.onnx    True 82988470
+NVTX: disponible en PyTorch
+Test congelado: 63 imágenes; benchmark: 10
+    filename label
+good_228.png  good
+good_235.png  good
+good_169.png  good
+good_131.png  good
+good_207.png  good
+ bad_024.png   bad
+ bad_023.png   bad
+ bad_019.png   bad
+ bad_007.png   bad
+ bad_035.png   bad
+Los tiempos incluyen lectura/decodificación y el round-trip GPU de EffAD de §8.
+Se conserva ONNX en CPU; SAM/DINO en CUDA, sin AMP ni cambio de resolución.
+Tensores con subnormales: 19 valores: 749314
+                            tensor  elements  subnormal
+     _m.model.student.conv5.weight   6291456     339232
+     _m.model.teacher.conv5.weight   3145728     250514
+     _m.model.student.conv4.weight   2359296      58174
+     _m.model.teacher.conv4.weight   2359296      28593
+     _m.model.teacher.conv2.weight   2097152      22158
+_m.model.ae.encoder.enconv6.weight    262144      11038
+_m.model.ae.encoder.enconv5.weight     65536       9311
+_m.model.ae.encoder.enconv4.weight     65536       9221
+     _m.model.student.conv6.weight    589824       9052
+     _m.model.student.conv3.weight    262144       3419
+Cargando SAM3 desde caché local…
+[transformers] `memory_attention_rope_theta` is deprecated and will be removed in v5.0. Use `rope_parameters['rope_theta']` instead.
+Loading weights:   0%|          | 0/1468 [00:00<?, ?it/s]Loading weights:  15%|#4        | 215/1468 [00:00<00:00, 2142.77it/s]Loading weights:  29%|##9       | 430/1468 [00:00<00:00, 1794.23it/s]Loading weights:  42%|####1     | 613/1468 [00:00<00:01, 513.28it/s] Loading weights:  49%|####9     | 725/1468 [00:01<00:02, 371.09it/s]Loading weights:  55%|#####4    | 801/1468 [00:01<00:02, 319.59it/s]Loading weights:  58%|#####8    | 857/1468 [00:02<00:02, 270.86it/s]Loading weights:  61%|######1   | 900/1468 [00:02<00:02, 272.32it/s]Loading weights:  64%|######3   | 938/1468 [00:02<00:02, 243.94it/s]Loading weights:  66%|######6   | 969/1468 [00:02<00:02, 226.00it/s]Loading weights:  68%|######7   | 996/1468 [00:02<00:02, 230.88it/s]Loading weights:  70%|######9   | 1023/1468 [00:03<00:02, 202.62it/s]Loading weights:  71%|#######1  | 1046/1468 [00:03<00:02, 175.41it/s]Loading weights:  73%|#######3  | 1077/1468 [00:03<00:02, 188.09it/s]Loading weights:  75%|#######4  | 1098/1468 [00:03<00:02, 175.48it/s]Loading weights:  76%|#######6  | 1117/1468 [00:03<00:01, 176.26it/s]Loading weights:  78%|#######8  | 1146/1468 [00:03<00:01, 179.45it/s]Loading weights:  80%|#######9  | 1171/1468 [00:03<00:01, 190.42it/s]Loading weights:  81%|########1 | 1191/1468 [00:04<00:01, 161.42it/s]Loading weights:  83%|########3 | 1220/1468 [00:04<00:01, 178.60it/s]Loading weights:  84%|########4 | 1240/1468 [00:04<00:01, 171.89it/s]Loading weights:  86%|########5 | 1258/1468 [00:04<00:01, 168.38it/s]Loading weights:  88%|########7 | 1288/1468 [00:04<00:01, 178.03it/s]Loading weights:  90%|########9 | 1316/1468 [00:04<00:00, 190.47it/s]Loading weights:  91%|#########1| 1338/1468 [00:04<00:00, 175.03it/s]Loading weights:  92%|#########2| 1356/1468 [00:05<00:00, 147.61it/s]Loading weights:  95%|#########4| 1393/1468 [00:05<00:00, 190.98it/s]Loading weights:  96%|#########6| 1414/1468 [00:05<00:00, 184.37it/s]Loading weights:  98%|#########7| 1434/1468 [00:05<00:00, 184.02it/s]Loading weights: 100%|##########| 1468/1468 [00:05<00:00, 266.90it/s]
+SAM listo. Cargando DINOv2…
+Loading weights:   0%|          | 0/223 [00:00<?, ?it/s]Loading weights:  14%|#4        | 32/223 [00:00<00:00, 307.09it/s]Loading weights:  35%|###4      | 77/223 [00:00<00:00, 361.18it/s]Loading weights:  51%|#####     | 113/223 [00:00<00:00, 324.32it/s]Loading weights:  65%|######5   | 146/223 [00:00<00:00, 301.03it/s]Loading weights:  93%|#########2| 207/223 [00:00<00:00, 382.13it/s]Loading weights: 100%|##########| 223/223 [00:00<00:00, 381.94it/s]
+DINO listo. Cargando ONNX CPU…
+    stage  seconds
+ sam_load 9.375711
+dino_load 0.920930
+onnx_load 1.202666
+Carga total (cachés locales, proceso ya iniciado): 11.500 s
+ONNX providers: ['CPUExecutionProvider'] ['CPUExecutionProvider']
+VRAM asignada/reservada GB: 3.709745664 3.86924544
+Funciones listas: referencia §8 y ruta instrumentada opcional.
+{
+  "cpu_logical_count": 16,
+  "torch_intra_threads": 10,
+  "torch_inter_threads": 10,
+  "ort_default_intra_threads": 4,
+  "ort_default_inter_threads": 1,
+  "ort_execution_mode": "ExecutionMode.ORT_SEQUENTIAL",
+  "ort_graph_optimization": "GraphOptimizationLevel.ORT_ENABLE_ALL",
+  "onnx_providers": [
+    "CPUExecutionProvider"
+  ],
+  "kernel_pid": 55984,
+  "administrator": true,
+  "thread_environment": {
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null,
+    "OPENBLAS_NUM_THREADS": null
+  }
+}
+{
+  "query_success": true,
+  "control_mask": 0,
+  "state_mask": 0,
+  "ecoqos_explicit": false,
+  "plan": "Power Scheme GUID: 64a64f24-65b9-4b56-befd-5ec1eaced9b3  (Silent)",
+  "cpu_max": "Power Scheme GUID: 64a64f24-65b9-4b56-befd-5ec1eaced9b3  (Silent)\n  Subgroup GUID: 54533251-82be-4824-96c1-47b60b740d00  (Processor power management)\n    GUID Alias: SUB_PROCESSOR\n    Power Setting GUID: bc5038f7-23e0-4960-96da-33abaf5935ec  (Maximum processor state)\n      GUID Alias: PROCTHROTTLEMAX\n      Minimum Possible Setting: 0x00000000\n      Maximum Possible Setting: 0x00000064\n      Possible Settings increment: 0x00000001\n      Possible Settings units: %\n    Current AC Power Setting Index: 0x00000064\n    Current DC Power Setting Index: 0x00000064\n\n"
+}
+NVIDIA Nsight Systems version 2025.1.3.140-251335620677v0
+
+Ejecutable: C:\Users\marti\.cache\qc-vision-tools\nsight-systems-2025.1.3.140\extracted\nsight_systems-windows-x86_64-2025.1.3.140-archive\nsight-systems\2025.1.3\target-windows-x64\nsys.exe
+Validador listo: exige kernels CUDA y el rango NVTX esperado.
+Confirmación en segundo plano preparada, con guardado por imagen.
+[
+  {
+    "job": "CPU threads",
+    "status": "not_started"
+  },
+  {
+    "job": "Confirmaci\u00f3n",
+    "status": "not_started"
+  }
+]
+Resultados conservados: []
+Análisis preparado: rangos host NVTX, PID real y actividad GPU durante EfficientAD.
+Aislado FTZ=True, repeat=0, good_228.png: 4928.0 ms, equiv=True
+Aislado FTZ=True, repeat=0, bad_024.png: 4175.8 ms, equiv=True
+Aislado FTZ=True, repeat=1, good_228.png: 4621.2 ms, equiv=True
+Aislado FTZ=True, repeat=1, bad_024.png: 4369.0 ms, equiv=True
+Aislado FTZ=True, repeat=2, good_228.png: 3923.8 ms, equiv=True
+Aislado FTZ=True, repeat=2, bad_024.png: 4306.4 ms, equiv=True
+{
+  "status": "complete",
+  "profiler": false,
+  "nvtx_during_measurement": false,
+  "flush_denormal": true,
+  "effad_threads": 4,
+  "unique_images": 2,
+  "measurements": 4,
+  "warmup_calls": 2,
+  "median_ms": 4337.695900001563,
+  "mean_ms": 4305.085975000111,
+  "min_ms": 3923.765800020192,
+  "max_ms": 4621.186299977126,
+  "peak_allocated_gb": 4.373686784,
+  "predictions_equivalent": true,
+  "environment": {
+    "kernel_pid": 55984,
+    "cwd": "C:\\Users\\marti\\Documents\\BetterClasificator",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "torch": "2.11.0+cu128",
+    "torch_cuda": "12.8",
+    "cuda_available": true,
+    "gpu": "NVIDIA GeForce RTX 4070 Laptop GPU",
+    "onnxruntime": "1.30.0",
+    "ort_providers": [
+      "AzureExecutionProvider",
+      "CPUExecutionProvider"
+    ],
+    "nsys": "C:\\Program Files\\NVIDIA Corporation\\Nsight Systems 2023.4.4\\target-windows-x64\\nsys.exe"
+  },
+  "windows_cpu": {
+    "query_success": true,
+    "control_mask": 0,
+    "state_mask": 0,
+    "ecoqos_explicit": false,
+    "plan": "Power Scheme GUID: 64a64f24-65b9-4b56-befd-5ec1eaced9b3  (Silent)",
+    "cpu_max": "Power Scheme GUID: 64a64f24-65b9-4b56-befd-5ec1eaced9b3  (Silent)\n  Subgroup GUID: 54533251-82be-4824-96c1-47b60b740d00  (Processor power management)\n    GUID Alias: SUB_PROCESSOR\n    Power Setting GUID: bc5038f7-23e0-4960-96da-33abaf5935ec  (Maximum processor state)\n      GUID Alias: PROCTHROTTLEMAX\n      Minimum Possible Setting: 0x00000000\n      Maximum Possible Setting: 0x00000064\n      Possible Settings increment: 0x00000001\n      Possible Settings units: %\n    Current AC Power Setting Index: 0x00000064\n    Current DC Power Setting Index: 0x00000064\n\n"
+  },
+  "source": "industrial_sam.py \u00a71 + \u00a78",
+  "note": "Two unique test images, two measured repetitions each; descriptive timings, no robust p95."
+}

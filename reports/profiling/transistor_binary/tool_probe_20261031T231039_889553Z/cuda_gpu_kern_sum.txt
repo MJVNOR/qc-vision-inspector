@@ -1,0 +1,11 @@
+
+NOTICE: Existing SQLite export found: C:\Users\marti\Documents\BetterClasificator\reports\profiling\transistor_binary\tool_probe_20261031T231039_889553Z\probe.sqlite
+        It is assumed file was previously exported from: C:\Users\marti\Documents\BetterClasificator\reports\profiling\transistor_binary\tool_probe_20261031T231039_889553Z\probe.nsys-rep
+        Consider using --force-export=true if needed.
+
+Processing [C:\Users\marti\Documents\BetterClasificator\reports\profiling\transistor_binary\tool_probe_20261031T231039_889553Z\probe.sqlite] with [C:\Program Files\NVIDIA Corporation\Nsight Systems 2023.4.4\host-windows-x64\reports\cuda_gpu_kern_sum.py]... 
+Time (%),Total Time (ns),Instances,Avg (ns),Med (ns),Min (ns),Max (ns),StdDev (ns),Name
+63.5,4448,1,4448.0,4448.0,4448,4448,0.0,ampere_sgemm_64x32_sliced1x4_nn
+36.5,2560,1,2560.0,2560.0,2560,2560,0.0,"void cublasLt::splitKreduce_kernel<(int)32, (int)16, int, float, float, float, float, (bool)0, float, float, float, (bool)1, (bool)0, (bool)0>(cublasLt::cublasSplitKParams<T6>, const T4 *, const T10 *, T9 *, T5 *, const T6 *, const T6 *, const T11 *, const T4 *, T11 *, void *, long long, T6 *, int *, T6 *, T6 *, const T6 *, const T6 *, const T6 *, const T6 *, const T6 *)"
+
+

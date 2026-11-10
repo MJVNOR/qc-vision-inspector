@@ -37,9 +37,13 @@ imbalanced: `data/processed/transistor_binary/{good:273, bad:40}` + `labels.csv`
   MANDATORY: all notebook reads/writes go through `marimo._code_mode`
   (the marimo MCP): no direct file edits, no shell heredocs into notebooks,
   no Python scripts that touch notebook state outside the kernel.
-- Reach the live kernel ONLY via the marimo MCP through the `execute`
-  Code Mode bridge (`search({query:"marimo"})`, then
+- Reach the live kernel ONLY via the marimo MCP. In OpenCode, use the
+  `execute` Code Mode bridge (`search({query:"marimo"})`, then
   `tools.marimo.list_sessions()` / `tools.marimo.execute_code(...)`).
+  In Codex, discover and call the registered `marimo` MCP's `list_sessions`
+  and `execute_code` tools directly (or through Codex's available tool
+  dispatcher). The OpenCode `search`/`execute` bridge is NOT a prerequisite
+  for Codex; tool prefixes depend on the client.
   NEVER use direct HTTP (`Invoke-RestMethod`/`fetch` against
   `/api/sessions`, `/api/kernel/execute`), shell scripts
   (`execute-code.sh`, `discover-servers.sh`), or `mx.py`-style bridge
@@ -48,8 +52,10 @@ imbalanced: `data/processed/transistor_binary/{good:273, bad:40}` + `labels.csv`
   notebook cell (`cm.create/edit/run_cell`) so progress is visible in
   the UI. Scratchpad `execute_code` calls are for probing/status only,
   never for developing logic off-screen. User mandate: todo en la libreta.
-- Sessions churn on browser reconnect: re-resolve the session on every call,
-  target by `--file`/filename, never cache session IDs.
+- Sessions churn on browser reconnect: re-resolve the session on every call
+  using `list_sessions`, match its `path`/`name` to the requested notebook,
+  then pass its current `session_id` to `execute_code`. Never cache session
+  IDs or assume the only active session is the requested notebook.
 - `create_cell` applies on context exit: create and `run_cell` in SEPARATE
   calls. `run_cell` is async: poll cell `status` until no `running`/`queued`.
 - NEVER read-edit the same cell twice in one context: the in-context view
@@ -75,15 +81,70 @@ imbalanced: `data/processed/transistor_binary/{good:273, bad:40}` + `labels.csv`
 - Kernel restarts reassign marimo cell IDs: never cache cell IDs across
   restarts — re-resolve by code/name, like sessions.
 
+### Codex connection (separate from OpenCode)
+
+- `opencode.jsonc` configures OpenCode, not Codex. Codex MCP servers live in
+  `%USERPROFILE%\.codex\config.toml` (or a trusted project's
+  `.codex/config.toml`). Installing the `marimo-pair` skill or pasting a pair
+  prompt does not register an MCP server in Codex.
+- Start marimo from the repo root with the server flags above. For the SAM
+  notebook, use:
+
+  ```powershell
+  uv run marimo edit --no-token --no-skew-protection --port 2718 --host localhost --mcp code-mode --mcp-allow-remote notebooks/industrial_sam.py
+  ```
+
+  Keep the notebook open in the browser. If port 2718 is already in use,
+  identify the existing server before replacing it; do not kill an active
+  kernel just to configure the client.
+- Register the HTTP MCP once in Codex, then verify the saved configuration:
+
+  ```powershell
+  codex mcp add marimo --url http://localhost:2718/mcp/server
+  codex mcp get marimo
+  codex mcp list
+  ```
+
+  Equivalent TOML (do not add a duplicate table):
+
+  ```toml
+  [mcp_servers.marimo]
+  url = "http://localhost:2718/mcp/server"
+  ```
+
+- Reload the Codex client/session if the new tools are not exposed. A saved
+  MCP entry is not proof of a live connection: verify that `list_sessions`
+  succeeds and contains the requested notebook. Never claim to be connected
+  based only on `codex mcp list` or a generated pair prompt.
+- For each newly connected kernel, first execute only
+  `import marimo._code_mode as cm; help(cm)` via the marimo MCP. Wait for
+  success before using `cm.get_context()` in a later call. Then inspect
+  current cells/status before making changes. Keep all durable Python work
+  in visible notebook cells, as required above.
+- The repo's installed marimo 0.25.1 supports the experimental
+  `--mcp code-mode` endpoint with `list_sessions` and `execute_code`;
+  plain `--mcp` selects the other toolset. Re-check installed CLI/source
+  when upgrading: the public documentation and experimental APIs can differ.
+- `uvx marimo@latest pair prompt --help` currently offers `--session`, not
+  `--file`. Do not pass `--file` to `pair prompt`; resolve notebook identity
+  through MCP instead. The standard pair skill's HTTP/shell helpers remain
+  prohibited by this repo's MCP-only rule.
+- Official references:
+  [Codex MCP configuration](https://learn.chatgpt.com/docs/extend/mcp),
+  [marimo MCP](https://docs.marimo.io/guides/editor_features/mcp/), and
+  [marimo pair](https://docs.marimo.io/guides/generate_with_ai/marimo_pair/).
+
 ## MLflow
 
 - MLflow 3 rejects file store: use `sqlite:///mlflow.db` (stays at repo root;
   artifact URIs are relative to it, so never move it). Experiment
   `transistor-binary`. View with `uv run mlflow ui` (or `make mlflow`).
-- `opencode.jsonc` wires `mlflow-mcp` to that sqlite URI. MANDATORY split:
-  every MLflow read/query goes through mlflow-mcp via the `execute` Code
-  Mode bridge (`search({namespace:"mlflow-mcp"})`, then
-  `tools["mlflow-mcp"].list_runs(...)`), even when not listed natively —
+- `opencode.jsonc` wires `mlflow-mcp` to that sqlite URI for OpenCode;
+  Codex needs its own MCP registration to use the same server. MANDATORY split:
+  every MLflow read/query goes through mlflow-mcp. In OpenCode use the
+  `execute` Code Mode bridge (`search({namespace:"mlflow-mcp"})`, then
+  `tools["mlflow-mcp"].list_runs(...)`); in Codex use its registered MCP
+  tools or available dispatcher, even when not listed natively —
   never re-derive via ad-hoc SDK queries when an MCP tool exists.
   Writes go through the SDK in notebook cells ONLY because the MCP has no
   `log_metric`/`log_artifact` tools.

@@ -7,6 +7,7 @@ __marimo__/
 *.npz
 *.joblib
 mlflow.db
+mlflow.db.bak
 mlruns/
 data/raw/
 data/interim/
@@ -16,3 +17,9 @@ mvtec_ad_evaluation/
 results*/
 anomalib_install.log
 *.pyc
+
+# Native profiler captures and derived databases; keep CSV/JSON/Markdown reports.
+reports/profiling/**/*.nsys-rep
+reports/profiling/**/*.qdrep
+reports/profiling/**/*.qdstrm
+reports/profiling/**/*.sqlite

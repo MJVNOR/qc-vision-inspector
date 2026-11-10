@@ -1,0 +1,110 @@
+{
+  "run_id": "20261031T131449_487581Z",
+  "config": {
+    "source": "industrial_sam.py §1 + §8",
+    "backbone": "facebook/dinov2-base",
+    "sam_checkpoint": "facebook/sam3",
+    "prompt": "transistor",
+    "seed": 42,
+    "batch_size": 1,
+    "images_per_class": 5,
+    "warmup_frames": 3,
+    "repeats": 3,
+    "precision": "float32",
+    "ort_providers": [
+      "CPUExecutionProvider"
+    ],
+    "scenario": "resident_models_reference_section8",
+    "sampling": "balanced subset of frozen test split; not production prevalence"
+  },
+  "environment": {
+    "kernel_pid": 4660,
+    "cwd": "C:\\Users\\marti\\Documents\\BetterClasificator",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "torch": "2.11.0+cu128",
+    "torch_cuda": "12.8",
+    "cuda_available": true,
+    "gpu": "NVIDIA GeForce RTX 4070 Laptop GPU",
+    "onnxruntime": "1.30.0",
+    "ort_providers": [
+      "AzureExecutionProvider",
+      "CPUExecutionProvider"
+    ],
+    "nsys": "C:\\Program Files\\NVIDIA Corporation\\Nsight Systems 2023.4.4\\target-windows-x64\\nsys.exe"
+  },
+  "load_seconds": 8.54920779998065,
+  "summary": {
+    "unique_images": 10,
+    "measurements": 30,
+    "median_ms": 142949.0250999952,
+    "p95_ms": 150785.050065002,
+    "mean_ms": 144003.12898000318,
+    "min_ms": 134987.5140999793,
+    "max_ms": 166327.738699998,
+    "sequential_service_fps": 0.00694429355169681,
+    "loop_wall_seconds": 4320.228733700002,
+    "loop_fps_including_progress": 0.006944076772135837,
+    "peak_allocated_gb": 4.372900864,
+    "peak_reserved_gb": 4.806672384,
+    "errors": 0
+  },
+  "memory_before": {
+    "allocated_bytes": 3832365056,
+    "reserved_bytes": 4804575232
+  },
+  "memory_peak": {
+    "allocated_bytes": 4372900864,
+    "reserved_bytes": 4806672384
+  },
+  "manifest_sha256": "51750c44717c60728c6e9b0c4587f18b29aecdd011492be7deeb067b35644426",
+  "artifacts_sha256": {
+    "good_mean.npy": "021719e93d0fcb9a2070e2648c83648e6b9d5bd3aa9a228e6a46c832ddbe75f2",
+    "fusion.npz": "c62f282e4fd788eb055da4941462f5e988d1069a73da5db173af7bb3d674a582",
+    "dino_logreg.onnx": "4c55efb10832c1e3e4beddc310b3a675992937058afa0a23788464b3d9a81937",
+    "effad.onnx": "e1451fd9793899d291e23accb1a7960f1d64ef09e813de820c80ddf0ad880dad"
+  },
+  "warmup": [
+    {
+      "frame": 1,
+      "filename": "good_228.png",
+      "latency_ms": 21026.714799983893
+    },
+    {
+      "frame": 2,
+      "filename": "good_235.png",
+      "latency_ms": 4793.063300021458
+    },
+    {
+      "frame": 3,
+      "filename": "good_169.png",
+      "latency_ms": 4877.576800005045
+    }
+  ],
+  "equivalence": [
+    {
+      "filename": "good_228.png",
+      "label": "good",
+      "equivalent": true,
+      "bad": false,
+      "max_score_delta": 0.0
+    },
+    {
+      "filename": "bad_024.png",
+      "label": "bad",
+      "equivalent": true,
+      "bad": true,
+      "max_score_delta": 0.0
+    }
+  ],
+  "errors": [],
+  "nsight_trace_collected": false,
+  "nsight_note": "NVTX emitted in current kernel; no external Nsight collector attached. CLI version has no attach option. A .nsys-rep is not produced by timers or NVTX alone.",
+  "limitations": [
+    "10 balanced test images, not an accuracy study",
+    "30 repeated timings, descriptive p95",
+    "warm OS/model caches; startup excludes kernel process creation",
+    "stage timings synchronize CUDA and are separate from primary latency",
+    "CPU ONNX and EffAD GPU roundtrip retained from reference section 8",
+    "SAM mask QC differs between reference batch path and section 8; this benchmark follows section 8"
+  ]
+}

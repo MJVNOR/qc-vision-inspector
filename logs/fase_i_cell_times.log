@@ -1,0 +1,51 @@
+[20:11:17] INIT rerun celda-por-celda fase_i
+
+Name                       KB
+----                       --
+effad_crop_f1.npz        2.00
+effad_crop_f2.npz        2.00
+effad_crop_f3.npz        2.00
+effad_crop_f4.npz        2.00
+effad_masked_f0.npz      2.00
+effad_masked_f1.npz      2.00
+effad_masked_f2.npz      2.00
+effad_masked_f3.npz      2.00
+effad_masked_f4.npz      2.00
+oof_crop.npz            28.00
+oof_masked.npz          23.00
+dino_crop_p05.pt      1416.00
+dino_crop_p08.pt      1417.00
+dino_crop_p10.pt      1417.00
+masks256.pt          20040.00
+patches_crop_p08.pt 240392.00
+
+
+=== PLAN: orden topologico, SKIP Vxnm/DnEU/TqIu (retrain incondicional, caches existen) ===
+START Hbol import-marimo
+END Hbol ok
+START MJUe md-fase
+END MJUe-vblA-bkHC-PKri ok-instant
+START Xref sam-load
+Xref MCP-timeout-30s (kernel sigue, esperando)
+END Xref ok-sam-cargado ~2min
+END lEQa ok-gate-10-10-sam_gate.png
+START SFPL-BYtC
+END SFPL-BYtC-RGSE ok-cache-313
+START Kclp dino-crops
+END Kclp-emfo ok-baseline313-crops-cache
+START Hstk dino-only
+END Hstk ok-dino-only-p08-0.925
+START nWHF patch-crop
+END nWHF ok-patches-cache
+START iLit local-cmp
+iLit MCP-timeout-30s (kernel sigue)
+END iLit ok-none0.825-crop1.00
+START ZHCJ masked-oof
+ZHCJ MCP-timeout-30s (kernel sigue)
+END ZHCJ ok-9min-maskedDino1.00-maskedLocal0.90
+START ROlb viz-masked
+END ROlb ok
+START qnkX ckpt-check
+qnkX MCP-timeout-30s (kernel sigue)
+LOGGER True en TqIu-Vxnm-DnEU (0 logger=False restantes)
+START drJU sam-auto-cache ~3.5h

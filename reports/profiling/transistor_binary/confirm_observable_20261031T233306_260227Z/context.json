@@ -1,0 +1,21 @@
+{
+  "status": "complete",
+  "threads": 4,
+  "spinning": false,
+  "flush_denormal": true,
+  "source": "industrial_sam.py \u00a71 + \u00a78",
+  "scenario": "resident_models_threads_and_ftz_variant",
+  "profiler": false,
+  "gpu_allocated_before_gb": 3.842850816,
+  "expected_calls": 6,
+  "warmups": 2,
+  "timed_calls": 4,
+  "note": "Small confirmation, no robust p95.",
+  "latency_valid": true,
+  "peak_allocated_gb": 4.382733824,
+  "median_ms": 5038.079449994257,
+  "mean_ms": 4664.230475005752,
+  "min_ms": 3161.2943000218365,
+  "max_ms": 5419.468700012658,
+  "equivalent": true
+}

@@ -1,0 +1,18 @@
+{
+  "expected_pid": 48184,
+  "decoded_kernel_pids": [
+    48184
+  ],
+  "pid_matches": true,
+  "frames": 2,
+  "effad_gpu_overlap": [
+    {
+      "cpu_range_ms": 780.686997,
+      "pipeline_gpu_kernel_overlap_ms": 0.0
+    },
+    {
+      "cpu_range_ms": 785.659925,
+      "pipeline_gpu_kernel_overlap_ms": 0.0
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+filename,label,threads,trial,warmup,ms,effad,reference_effad,score_match
+good_228.png,good,1,0,True,254435.5779000034,0.17090335488319397,0.1709033548831939,True

@@ -1,0 +1,69 @@
+{
+  "status": "complete",
+  "threads": 4,
+  "spinning": false,
+  "flush_denormal": true,
+  "source": "industrial_sam.py \u00a71 + \u00a78",
+  "scenario": "resident_models_threads_and_ftz_variant",
+  "profiler": false,
+  "expected_calls": 6,
+  "warmups": 2,
+  "timed_calls": 4,
+  "note": "Small confirmation, no robust p95.",
+  "median_ms": 113430.24630000582,
+  "mean_ms": 100786.2188500003,
+  "min_ms": 10395.715899998322,
+  "max_ms": 165888.66689999122,
+  "equivalent": true,
+  "latency_valid": false,
+  "invalid_latency_reason": "Duplicate GPU model instances exceeded physical VRAM; cleanup occurred during this confirmation.",
+  "gpu_cleanup": {
+    "before_allocated_gb": 11.460377088,
+    "before_reserved_gb": 12.335448064,
+    "active_model_ids": [
+      2081910906976,
+      2090458150720
+    ],
+    "models": [
+      {
+        "id": 2087134652672,
+        "type": "Sam3Model",
+        "device_before": "cuda:0",
+        "offloaded": true
+      },
+      {
+        "id": 2082191313088,
+        "type": "Sam3Model",
+        "device_before": "cuda:0",
+        "offloaded": true
+      },
+      {
+        "id": 2081870535504,
+        "type": "Dinov2Model",
+        "device_before": "cuda:0",
+        "offloaded": true
+      },
+      {
+        "id": 2086906198016,
+        "type": "Dinov2Model",
+        "device_before": "cuda:0",
+        "offloaded": true
+      },
+      {
+        "id": 2081910906976,
+        "type": "Sam3Model",
+        "device_before": "cuda:0",
+        "offloaded": false
+      },
+      {
+        "id": 2090458150720,
+        "type": "Dinov2Model",
+        "device_before": "cuda:0",
+        "offloaded": false
+      }
+    ],
+    "after_allocated_gb": 4.002919936,
+    "after_reserved_gb": 4.557111296
+  },
+  "equivalence_valid": true
+}

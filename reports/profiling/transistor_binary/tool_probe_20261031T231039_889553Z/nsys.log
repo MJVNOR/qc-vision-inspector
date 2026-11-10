@@ -1,0 +1,6 @@
+Capture range started in the application.
+Capture range ended in the application.
+Generating 'C:\Users\marti\AppData\Local\Temp\nsys-report-d175.qdstrm'
+[1/1] [0%                          ] probe.nsys-rep[1/1] [0%                          ] probe.nsys-rep[1/1] [==========49%               ] probe.nsys-rep[1/1] [===========50%              ] probe.nsys-rep[1/1] [========================100%] probe.nsys-rep[1/1] [========================100%] probe.nsys-rep
+Generated:
+    C:\Users\marti\Documents\BetterClasificator\reports\profiling\transistor_binary\tool_probe_20261031T231039_889553Z\probe.nsys-rep

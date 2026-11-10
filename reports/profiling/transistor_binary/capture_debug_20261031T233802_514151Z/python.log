@@ -1,0 +1,188 @@
+{
+  "kernel_pid": 61360,
+  "cwd": "C:\\Users\\marti\\Documents\\BetterClasificator",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "torch": "2.11.0+cu128",
+  "torch_cuda": "12.8",
+  "cuda_available": true,
+  "gpu": "NVIDIA GeForce RTX 4070 Laptop GPU",
+  "onnxruntime": "1.30.0",
+  "ort_providers": [
+    "AzureExecutionProvider",
+    "CPUExecutionProvider"
+  ],
+  "nsys": "C:\\Program Files\\NVIDIA Corporation\\Nsight Systems 2023.4.4\\target-windows-x64\\nsys.exe"
+}
+        artifact  exists    bytes
+   good_mean.npy    True  3145856
+      fusion.npz    True    29486
+dino_logreg.onnx    True     8049
+      effad.onnx    True 82988470
+NVTX: disponible en PyTorch
+Test congelado: 63 imágenes; benchmark: 10
+    filename label
+good_228.png  good
+good_235.png  good
+good_169.png  good
+good_131.png  good
+good_207.png  good
+ bad_024.png   bad
+ bad_023.png   bad
+ bad_019.png   bad
+ bad_007.png   bad
+ bad_035.png   bad
+Los tiempos incluyen lectura/decodificación y el round-trip GPU de EffAD de §8.
+Se conserva ONNX en CPU; SAM/DINO en CUDA, sin AMP ni cambio de resolución.
+NVIDIA Nsight Systems version 2023.4.4.54-234433681190v0
+
+Opciones de attach en CLI:
+	-b, --backtrace=
+	   Select the backtrace method to use while sampling.
+	   Select 'none' to disable backtrace collection.
+	-c, --capture-range=
+	   Possible values are none, cudaProfilerApi, nvtx, hotkey.
+	   When '-c nvtx' is used, profiling will start only when the specified NVTX range is
+	   set by '--hotkey-capture' is pressed in the application. This works for graphic apps only.
+	   Note that you must enable CUDA or NVTX tracing of the target application
+	   for '-c cudaProfilerApi' or '-c nvtx' to work.
+	   When '-capture-range none' is used, cudaProfilerStart/Stop APIs and hotkey will 
+	   be ignored and NVTX ranges will be ignored as collection start/stop triggers.
+	--capture-range-end=
+	   Specify the desired behavior when a capture range ends. Applicable only when used along
+	   with --capture-range option.
+	   If 'none', capture range end will be ignored.
+	   If 'stop', collection will stop at capture range end. Any subsequent capture ranges will be
+	   If 'stop-shutdown', collection will stop at capture range end and session will be shutdown.
+	   If 'repeat[:N]', collection will stop at capture range end and subsequent capture ranges
+	   Use the optional ':N' to specify max number of capture ranges to be honored. Any subsequent
+	   capture ranges will be ignored once N capture ranges are collected.
+	   Trace OS thread scheduling activity. Select 'none' to disable tracing CPU context switches. 
+	   'process-tree' or 'system-wide' requires administrative privileges. 
+	--cuda-graph-trace=<granularity>[:<launch origin>]
+	   Set the granularity and launch origin for CUDA graph trace.
+	   If 'graph' is selected, CUDA graphs will be traced as a whole and node
+	   will not be traced as a whole. This may cause significant runtime overhead.
+	   If 'host-only' is selected, only CUDA graphs launched from host codes will be traced.
+	   will both be traced. This is only supported when the granularity is set to 'graph' and
+	   Stop the recording session after this many frames have been captured.
+	   The Nsight Systems trace initialization involves creating a D3D
+	   If individual or true, trace each DX12 workload's GPU activity individually.
+	   If batch, trace DX12 workloads' GPU activity in ExecuteCommandLists call batches.
+	   If none or false, do not trace DX12 workloads' GPU activity.
+	   Note that this switch is applicable only when --trace=dx12 is specified.
+	   If true, trace wait calls that block on fences for DX12.
+	   Note that this switch is applicable only when --trace=dx12 is specified.
+	   Add custom ETW trace provider(s).
+           cause the CUDA trace buffers to be flushed. Note that the CUDA trace
+           Collect GPU video accelerator traces from specified devices.
+	   Trace GPU context switches. This switch requires CUDA driver r435.17 or higher.
+	   app, application, backtrace, capture, cli, command, cuda, driver, dx, dx12,
+	   injection, interactive, interrupt, isr, log, logs, memory, nvtx, opengl,
+	   switch, symbol, symbols, trace, vulkan, wait, wddm, and windows.
+	--hotkey-capture=
+	   Note that this switch is applicable only when --capture-range=hotkey is specified.
+	   Trace Interrupt Service Routines (ISRs) and Deferred Procedure Calls (DPCs).
+	   Requires administrative privileges. Available only on Windows devices.
+	--nvtx-domain-[include|exclude]=
+	   Possible values are a comma-separated list of NVTX domains.
+	   options are mutually exclusive. 'default' filters the NVTX default domain. A domain with
+	   Note that both switches are applicable only when --trace=nvtx is specified.
+	   If true, trace the OpenGL workload's GPU activity.
+	   Note that this switch is applicable only when --trace=opengl is specified.
+	-p, --nvtx-capture=
+	   NVTX message and domain to trigger the profiling session.
+	   Note that this switch is applicable only when --capture-range=nvtx is specified.
+	--python-nvtx-annotations=
+	   containing the requested NVTX annotations.
+	   Note that nvtx package must be installed on the target Python.
+	   See 'C:\Program Files\NVIDIA Corporation\Nsight Systems 2023.4.4\host-windows-x64\PythonNvtx/annotations.json' as an example.
+	   Sample Python backtrace.
+	   Note: This feature provides meaningful backtraces for Python processes. 
+	   Resolve symbols of captured samples and backtraces.
+	   If true, retains ETW files generated by the trace, merges and moves the files to the output directory.
+	   Collect CPU IP/backtrace samples. Select 'none' to disable sampling. 'process-tree' or 'system-wide' requires administrative privileges. 
+	-t, --trace=
+	   Possible values are 'cuda', 'nvtx', 'cublas', 'cublas-verbose', 'cusparse', 
+	   Select the API(s) to trace. Multiple APIs can be selected, separated by commas only
+	   If '<api>-annotations' is selected, the corresponding API will also be traced.
+	   If 'none' is selected, no APIs are traced.
+	   Default is 'cuda,nvtx,opengl'. Application scope.
+	   If individual or true, trace each Vulkan workload's GPU activity individually.
+	   If batch, trace Vulkan workloads' GPU activity in vkQueueSubmit call batches.
+	   If none or false, do not trace Vulkan workloads' GPU activity.
+	   Note that this switch is applicable only when --trace=vulkan is specified.
+	   Requires administrative privileges.
+	   Note that this switch is applicable only when --trace=wddm is specified.
+	--wddm-backtraces=
+	   If true, collect backtraces of WDDM events.
+	   Requires administrative privileges.
+	   Note that this switch is applicable only when --trace=wddm is specified.
+PID del kernel: 61360
+Validador listo: exige kernels CUDA y el rango NVTX esperado.
+Tensores con subnormales: 19 valores: 749314
+                            tensor  elements  subnormal
+     _m.model.student.conv5.weight   6291456     339232
+     _m.model.teacher.conv5.weight   3145728     250514
+     _m.model.student.conv4.weight   2359296      58174
+     _m.model.teacher.conv4.weight   2359296      28593
+     _m.model.teacher.conv2.weight   2097152      22158
+_m.model.ae.encoder.enconv6.weight    262144      11038
+_m.model.ae.encoder.enconv5.weight     65536       9311
+_m.model.ae.encoder.enconv4.weight     65536       9221
+     _m.model.student.conv6.weight    589824       9052
+     _m.model.student.conv3.weight    262144       3419
+Cargando SAM3 desde caché local…
+[transformers] `memory_attention_rope_theta` is deprecated and will be removed in v5.0. Use `rope_parameters['rope_theta']` instead.
+Loading weights:   0%|          | 0/1468 [00:00<?, ?it/s]Loading weights:  13%|#3        | 193/1468 [00:00<00:00, 1892.50it/s]Loading weights:  26%|##6       | 383/1468 [00:00<00:00, 1520.63it/s]Loading weights:  37%|###6      | 540/1468 [00:00<00:01, 602.25it/s] Loading weights:  44%|####3     | 640/1468 [00:01<00:02, 349.52it/s]Loading weights:  48%|####8     | 707/1468 [00:01<00:02, 285.60it/s]Loading weights:  51%|#####1    | 756/1468 [00:01<00:02, 265.48it/s]Loading weights:  54%|#####4    | 795/1468 [00:02<00:02, 240.82it/s]Loading weights:  56%|#####6    | 827/1468 [00:02<00:02, 224.40it/s]Loading weights:  58%|#####8    | 854/1468 [00:02<00:02, 204.72it/s]Loading weights:  60%|#####9    | 877/1468 [00:02<00:02, 200.00it/s]Loading weights:  61%|######1   | 899/1468 [00:02<00:03, 186.28it/s]Loading weights:  63%|######2   | 922/1468 [00:03<00:02, 190.21it/s]Loading weights:  64%|######4   | 944/1468 [00:03<00:02, 194.34it/s]Loading weights:  66%|######5   | 965/1468 [00:03<00:03, 162.14it/s]Loading weights:  67%|######7   | 988/1468 [00:03<00:02, 174.49it/s]Loading weights:  69%|######8   | 1007/1468 [00:03<00:02, 168.98it/s]Loading weights:  70%|#######   | 1028/1468 [00:03<00:02, 161.32it/s]Loading weights:  71%|#######1  | 1049/1468 [00:03<00:02, 161.75it/s]Loading weights:  73%|#######2  | 1068/1468 [00:03<00:02, 162.33it/s]Loading weights:  74%|#######3  | 1085/1468 [00:04<00:02, 137.21it/s]Loading weights:  75%|#######5  | 1108/1468 [00:04<00:02, 156.40it/s]Loading weights:  77%|#######7  | 1131/1468 [00:04<00:02, 154.13it/s]Loading weights:  79%|#######8  | 1159/1468 [00:04<00:01, 181.64it/s]Loading weights:  80%|########  | 1179/1468 [00:04<00:01, 171.53it/s]Loading weights:  82%|########1 | 1198/1468 [00:04<00:01, 161.26it/s]Loading weights:  83%|########2 | 1215/1468 [00:04<00:01, 155.94it/s]Loading weights:  84%|########4 | 1240/1468 [00:04<00:01, 179.00it/s]Loading weights:  86%|########5 | 1259/1468 [00:05<00:01, 164.53it/s]Loading weights:  87%|########7 | 1281/1468 [00:05<00:01, 160.68it/s]Loading weights:  88%|########8 | 1298/1468 [00:05<00:01, 148.48it/s]Loading weights:  90%|########9 | 1318/1468 [00:05<00:01, 148.89it/s]Loading weights:  91%|#########1| 1342/1468 [00:05<00:00, 169.47it/s]Loading weights:  93%|#########2| 1363/1468 [00:05<00:00, 172.94it/s]Loading weights:  94%|#########4| 1382/1468 [00:05<00:00, 177.03it/s]Loading weights:  95%|#########5| 1401/1468 [00:05<00:00, 180.24it/s]Loading weights:  97%|#########6| 1420/1468 [00:06<00:00, 143.38it/s]Loading weights:  98%|#########8| 1439/1468 [00:06<00:00, 149.61it/s]Loading weights: 100%|##########| 1468/1468 [00:06<00:00, 234.29it/s]
+SAM listo. Cargando DINOv2…
+Loading weights:   0%|          | 0/223 [00:00<?, ?it/s]Loading weights:  16%|#5        | 35/223 [00:00<00:00, 348.77it/s]Loading weights:  31%|###1      | 70/223 [00:00<00:00, 304.54it/s]Loading weights:  45%|####5     | 101/223 [00:00<00:00, 289.75it/s]Loading weights:  59%|#####8    | 131/223 [00:00<00:00, 274.25it/s]Loading weights:  71%|#######1  | 159/223 [00:00<00:00, 261.91it/s]Loading weights: 100%|##########| 223/223 [00:00<00:00, 381.54it/s]
+DINO listo. Cargando ONNX CPU…
+    stage   seconds
+ sam_load 10.469829
+dino_load  1.079318
+onnx_load  1.183656
+Carga total (cachés locales, proceso ya iniciado): 12.733 s
+ONNX providers: ['CPUExecutionProvider'] ['CPUExecutionProvider']
+VRAM asignada/reservada GB: 3.709745664 3.86924544
+Funciones listas: referencia §8 y ruta instrumentada opcional.
+{
+  "cpu_logical_count": 16,
+  "torch_intra_threads": 10,
+  "torch_inter_threads": 10,
+  "ort_default_intra_threads": 4,
+  "ort_default_inter_threads": 1,
+  "ort_execution_mode": "ExecutionMode.ORT_SEQUENTIAL",
+  "ort_graph_optimization": "GraphOptimizationLevel.ORT_ENABLE_ALL",
+  "onnx_providers": [
+    "CPUExecutionProvider"
+  ],
+  "kernel_pid": 61360,
+  "administrator": true,
+  "thread_environment": {
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null,
+    "OPENBLAS_NUM_THREADS": null
+  }
+}
+{
+  "query_success": true,
+  "control_mask": 0,
+  "state_mask": 0,
+  "ecoqos_explicit": false,
+  "plan": "Power Scheme GUID: 64a64f24-65b9-4b56-befd-5ec1eaced9b3  (Silent)",
+  "cpu_max": "Power Scheme GUID: 64a64f24-65b9-4b56-befd-5ec1eaced9b3  (Silent)\n  Subgroup GUID: 54533251-82be-4824-96c1-47b60b740d00  (Processor power management)\n    GUID Alias: SUB_PROCESSOR\n    Power Setting GUID: bc5038f7-23e0-4960-96da-33abaf5935ec  (Maximum processor state)\n      GUID Alias: PROCTHROTTLEMAX\n      Minimum Possible Setting: 0x00000000\n      Maximum Possible Setting: 0x00000064\n      Possible Settings increment: 0x00000001\n      Possible Settings units: %\n    Current AC Power Setting Index: 0x00000064\n    Current DC Power Setting Index: 0x00000064\n\n"
+}
+Modo Nsight: calentamiento fuera de captura, luego una GOOD y una BAD.
+Ventana CUDA/NVTX ejecutada. Comprobar la traza tras finalizar Nsight: C:\Users\marti\Documents\BetterClasificator\reports\profiling\transistor_binary\capture_debug_20261031T233802_514151Z
+Confirmación en segundo plano preparada, con guardado por imagen.
+[
+  {
+    "job": "CPU threads",
+    "status": "not_started"
+  },
+  {
+    "job": "Confirmaci\u00f3n",
+    "status": "not_started"
+  }
+]
+Resultados conservados: []

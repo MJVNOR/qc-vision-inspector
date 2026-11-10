@@ -1,0 +1,671 @@
+{
+  "status": "complete",
+  "source": "industrial_sam.py \u00a71 + \u00a78",
+  "weights_modified": false,
+  "artifacts_sha256": {
+    "good_mean.npy": "021719e93d0fcb9a2070e2648c83648e6b9d5bd3aa9a228e6a46c832ddbe75f2",
+    "fusion.npz": "c62f282e4fd788eb055da4941462f5e988d1069a73da5db173af7bb3d674a582",
+    "dino_logreg.onnx": "4c55efb10832c1e3e4beddc310b3a675992937058afa0a23788464b3d9a81937",
+    "effad.onnx": "e1451fd9793899d291e23accb1a7960f1d64ef09e813de820c80ddf0ad880dad"
+  },
+  "artifacts_unchanged": true,
+  "isolated_unprofiled": {
+    "reference": {
+      "status": "complete",
+      "profiler": false,
+      "nvtx_during_measurement": false,
+      "flush_denormal": false,
+      "effad_threads": 0,
+      "unique_images": 2,
+      "measurements": 4,
+      "warmup_calls": 2,
+      "median_ms": 143091.84120000282,
+      "mean_ms": 139650.23980000115,
+      "min_ms": 126749.670899997,
+      "max_ms": 145667.60590000194,
+      "peak_allocated_gb": 4.373686784,
+      "predictions_equivalent": true,
+      "environment": {
+        "kernel_pid": 64044,
+        "cwd": "C:\\Users\\marti\\Documents\\BetterClasificator",
+        "platform": "Windows-11-10.0.26200-SP0",
+        "torch": "2.11.0+cu128",
+        "torch_cuda": "12.8",
+        "cuda_available": true,
+        "gpu": "NVIDIA GeForce RTX 4070 Laptop GPU",
+        "onnxruntime": "1.30.0",
+        "ort_providers": [
+          "AzureExecutionProvider",
+          "CPUExecutionProvider"
+        ],
+        "nsys": "C:\\Program Files\\NVIDIA Corporation\\Nsight Systems 2023.4.4\\target-windows-x64\\nsys.exe"
+      },
+      "windows_cpu": {
+        "query_success": true,
+        "control_mask": 0,
+        "state_mask": 0,
+        "ecoqos_explicit": false,
+        "plan": "Power Scheme GUID: 64a64f24-65b9-4b56-befd-5ec1eaced9b3  (Silent)",
+        "cpu_max": "Power Scheme GUID: 64a64f24-65b9-4b56-befd-5ec1eaced9b3  (Silent)\n  Subgroup GUID: 54533251-82be-4824-96c1-47b60b740d00  (Processor power management)\n    GUID Alias: SUB_PROCESSOR\n    Power Setting GUID: bc5038f7-23e0-4960-96da-33abaf5935ec  (Maximum processor state)\n      GUID Alias: PROCTHROTTLEMAX\n      Minimum Possible Setting: 0x00000000\n      Maximum Possible Setting: 0x00000064\n      Possible Settings increment: 0x00000001\n      Possible Settings units: %\n    Current AC Power Setting Index: 0x00000064\n    Current DC Power Setting Index: 0x00000064\n\n"
+      },
+      "source": "industrial_sam.py \u00a71 + \u00a78",
+      "note": "Two unique test images, two measured repetitions each; descriptive timings, no robust p95.",
+      "directory": "C:\\Users\\marti\\Documents\\BetterClasificator\\reports\\profiling\\transistor_binary\\isolated_reference_20261031T235834_105967Z"
+    },
+    "ftz": {
+      "status": "complete",
+      "profiler": false,
+      "nvtx_during_measurement": false,
+      "flush_denormal": true,
+      "effad_threads": 4,
+      "unique_images": 2,
+      "measurements": 4,
+      "warmup_calls": 2,
+      "median_ms": 4337.695900001563,
+      "mean_ms": 4305.085975000111,
+      "min_ms": 3923.765800020192,
+      "max_ms": 4621.186299977126,
+      "peak_allocated_gb": 4.373686784,
+      "predictions_equivalent": true,
+      "environment": {
+        "kernel_pid": 55984,
+        "cwd": "C:\\Users\\marti\\Documents\\BetterClasificator",
+        "platform": "Windows-11-10.0.26200-SP0",
+        "torch": "2.11.0+cu128",
+        "torch_cuda": "12.8",
+        "cuda_available": true,
+        "gpu": "NVIDIA GeForce RTX 4070 Laptop GPU",
+        "onnxruntime": "1.30.0",
+        "ort_providers": [
+          "AzureExecutionProvider",
+          "CPUExecutionProvider"
+        ],
+        "nsys": "C:\\Program Files\\NVIDIA Corporation\\Nsight Systems 2023.4.4\\target-windows-x64\\nsys.exe"
+      },
+      "windows_cpu": {
+        "query_success": true,
+        "control_mask": 0,
+        "state_mask": 0,
+        "ecoqos_explicit": false,
+        "plan": "Power Scheme GUID: 64a64f24-65b9-4b56-befd-5ec1eaced9b3  (Silent)",
+        "cpu_max": "Power Scheme GUID: 64a64f24-65b9-4b56-befd-5ec1eaced9b3  (Silent)\n  Subgroup GUID: 54533251-82be-4824-96c1-47b60b740d00  (Processor power management)\n    GUID Alias: SUB_PROCESSOR\n    Power Setting GUID: bc5038f7-23e0-4960-96da-33abaf5935ec  (Maximum processor state)\n      GUID Alias: PROCTHROTTLEMAX\n      Minimum Possible Setting: 0x00000000\n      Maximum Possible Setting: 0x00000064\n      Possible Settings increment: 0x00000001\n      Possible Settings units: %\n    Current AC Power Setting Index: 0x00000064\n    Current DC Power Setting Index: 0x00000064\n\n"
+      },
+      "source": "industrial_sam.py \u00a71 + \u00a78",
+      "note": "Two unique test images, two measured repetitions each; descriptive timings, no robust p95.",
+      "directory": "C:\\Users\\marti\\Documents\\BetterClasificator\\reports\\profiling\\transistor_binary\\isolated_ftz_20261101T001332_297271Z"
+    }
+  },
+  "median_ratio_reference_over_variant": 32.987983597455795,
+  "validated_traces": {
+    "ftz": {
+      "directory": "C:\\Users\\marti\\Documents\\BetterClasificator\\reports\\profiling\\transistor_binary\\nsight_ftz_20261031T234733_579588Z",
+      "validation": {
+        "trace": "C:\\Users\\marti\\Documents\\BetterClasificator\\reports\\profiling\\transistor_binary\\nsight_ftz_20261031T234733_579588Z\\capture.nsys-rep",
+        "sqlite_exists": true,
+        "cuda_kernel_count": 5776,
+        "cuda_kernels_ms": 2638.864521,
+        "inspect_ranges": [
+          "inspect/capture",
+          "inspect/dino_d2h",
+          "inspect/dino_h2d",
+          "inspect/dino_preprocess",
+          "inspect/dinov2",
+          "inspect/effad_gpu_roundtrip",
+          "inspect/effad_preprocess",
+          "inspect/efficientad_cpu",
+          "inspect/frame",
+          "inspect/fusion",
+          "inspect/load_decode",
+          "inspect/logreg",
+          "inspect/mask_crop",
+          "inspect/sam",
+          "inspect/sam_h2d",
+          "inspect/sam_postprocess",
+          "inspect/sam_preprocess"
+        ],
+        "expected_range_found": true,
+        "trace_validated": true
+      },
+      "context": {
+        "source": "industrial_sam.py \u00a71 + \u00a78",
+        "environment": {
+          "kernel_pid": 48184,
+          "cwd": "C:\\Users\\marti\\Documents\\BetterClasificator",
+          "platform": "Windows-11-10.0.26200-SP0",
+          "torch": "2.11.0+cu128",
+          "torch_cuda": "12.8",
+          "cuda_available": true,
+          "gpu": "NVIDIA GeForce RTX 4070 Laptop GPU",
+          "onnxruntime": "1.30.0",
+          "ort_providers": [
+            "AzureExecutionProvider",
+            "CPUExecutionProvider"
+          ],
+          "nsys": "C:\\Program Files\\NVIDIA Corporation\\Nsight Systems 2023.4.4\\target-windows-x64\\nsys.exe"
+        },
+        "runtime": {
+          "cpu_logical_count": 16,
+          "torch_intra_threads": 10,
+          "torch_inter_threads": 10,
+          "ort_default_intra_threads": 4,
+          "ort_default_inter_threads": 1,
+          "ort_execution_mode": "ExecutionMode.ORT_SEQUENTIAL",
+          "ort_graph_optimization": "GraphOptimizationLevel.ORT_ENABLE_ALL",
+          "onnx_providers": [
+            "CPUExecutionProvider"
+          ],
+          "kernel_pid": 48184,
+          "administrator": true,
+          "thread_environment": {
+            "OMP_NUM_THREADS": null,
+            "MKL_NUM_THREADS": null,
+            "OPENBLAS_NUM_THREADS": null
+          }
+        },
+        "windows_cpu": {
+          "query_success": true,
+          "control_mask": 0,
+          "state_mask": 0,
+          "ecoqos_explicit": false,
+          "plan": "",
+          "cpu_max": ""
+        },
+        "capture_requested": true,
+        "trace_validated": true,
+        "nsys_executable": "C:\\Users\\marti\\.cache\\qc-vision-tools\\nsight-systems-2025.1.3.140\\extracted\\nsight_systems-windows-x86_64-2025.1.3.140-archive\\nsight-systems\\2025.1.3\\target-windows-x64\\nsys.exe",
+        "nsys_version": "NVIDIA Nsight Systems version 2025.1.3.140-251335620677v0\n",
+        "flush_denormal": true,
+        "effad_threads": 4,
+        "synchronized_stage_timing": false,
+        "frames": 2,
+        "configuration": {
+          "source": "industrial_sam.py \u00a71 + \u00a78",
+          "backbone": "facebook/dinov2-base",
+          "sam_checkpoint": "facebook/sam3",
+          "prompt": "transistor",
+          "seed": 42,
+          "batch_size": 1,
+          "images_per_class": 5,
+          "warmup_frames": 3,
+          "repeats": 3,
+          "precision": "float32",
+          "ort_providers": [
+            "CPUExecutionProvider"
+          ],
+          "scenario": "resident_models_reference_section8",
+          "sampling": "balanced subset of frozen test split; not production prevalence"
+        },
+        "predictions_equivalent": true
+      }
+    },
+    "reference": {
+      "directory": "C:\\Users\\marti\\Documents\\BetterClasificator\\reports\\profiling\\transistor_binary\\nsight_reference_20261031T235032_944311Z",
+      "validation": {
+        "trace": "C:\\Users\\marti\\Documents\\BetterClasificator\\reports\\profiling\\transistor_binary\\nsight_reference_20261031T235032_944311Z\\capture.nsys-rep",
+        "sqlite_exists": true,
+        "cuda_kernel_count": 5776,
+        "cuda_kernels_ms": 2684.761316,
+        "inspect_ranges": [
+          "inspect/capture",
+          "inspect/dino_d2h",
+          "inspect/dino_h2d",
+          "inspect/dino_preprocess",
+          "inspect/dinov2",
+          "inspect/effad_gpu_roundtrip",
+          "inspect/effad_preprocess",
+          "inspect/efficientad_cpu",
+          "inspect/frame",
+          "inspect/fusion",
+          "inspect/load_decode",
+          "inspect/logreg",
+          "inspect/mask_crop",
+          "inspect/sam",
+          "inspect/sam_h2d",
+          "inspect/sam_postprocess",
+          "inspect/sam_preprocess"
+        ],
+        "expected_range_found": true,
+        "trace_validated": true
+      },
+      "context": {
+        "source": "industrial_sam.py \u00a71 + \u00a78",
+        "environment": {
+          "kernel_pid": 42592,
+          "cwd": "C:\\Users\\marti\\Documents\\BetterClasificator",
+          "platform": "Windows-11-10.0.26200-SP0",
+          "torch": "2.11.0+cu128",
+          "torch_cuda": "12.8",
+          "cuda_available": true,
+          "gpu": "NVIDIA GeForce RTX 4070 Laptop GPU",
+          "onnxruntime": "1.30.0",
+          "ort_providers": [
+            "AzureExecutionProvider",
+            "CPUExecutionProvider"
+          ],
+          "nsys": "C:\\Program Files\\NVIDIA Corporation\\Nsight Systems 2023.4.4\\target-windows-x64\\nsys.exe"
+        },
+        "runtime": {
+          "cpu_logical_count": 16,
+          "torch_intra_threads": 10,
+          "torch_inter_threads": 10,
+          "ort_default_intra_threads": 0,
+          "ort_default_inter_threads": 0,
+          "ort_execution_mode": "ExecutionMode.ORT_SEQUENTIAL",
+          "ort_graph_optimization": "GraphOptimizationLevel.ORT_ENABLE_ALL",
+          "onnx_providers": [
+            "CPUExecutionProvider"
+          ],
+          "kernel_pid": 42592,
+          "administrator": true,
+          "thread_environment": {
+            "OMP_NUM_THREADS": null,
+            "MKL_NUM_THREADS": null,
+            "OPENBLAS_NUM_THREADS": null
+          }
+        },
+        "windows_cpu": {
+          "query_success": true,
+          "control_mask": 0,
+          "state_mask": 0,
+          "ecoqos_explicit": false,
+          "plan": "",
+          "cpu_max": ""
+        },
+        "capture_requested": true,
+        "trace_validated": true,
+        "nsys_executable": "C:\\Users\\marti\\.cache\\qc-vision-tools\\nsight-systems-2025.1.3.140\\extracted\\nsight_systems-windows-x86_64-2025.1.3.140-archive\\nsight-systems\\2025.1.3\\target-windows-x64\\nsys.exe",
+        "nsys_version": "NVIDIA Nsight Systems version 2025.1.3.140-251335620677v0\n",
+        "flush_denormal": false,
+        "effad_threads": 0,
+        "synchronized_stage_timing": false,
+        "frames": 2,
+        "configuration": {
+          "source": "industrial_sam.py \u00a71 + \u00a78",
+          "backbone": "facebook/dinov2-base",
+          "sam_checkpoint": "facebook/sam3",
+          "prompt": "transistor",
+          "seed": 42,
+          "batch_size": 1,
+          "images_per_class": 5,
+          "warmup_frames": 3,
+          "repeats": 3,
+          "precision": "float32",
+          "ort_providers": [
+            "CPUExecutionProvider"
+          ],
+          "scenario": "resident_models_reference_section8",
+          "sampling": "balanced subset of frozen test split; not production prevalence"
+        },
+        "predictions_equivalent": true
+      }
+    }
+  },
+  "trace_scopes": {
+    "reference": {
+      "expected_pid": 42592,
+      "decoded_kernel_pids": [
+        42592
+      ],
+      "pid_matches": true,
+      "frames": 2,
+      "effad_gpu_overlap": [
+        {
+          "cpu_range_ms": 4018.417452,
+          "pipeline_gpu_kernel_overlap_ms": 0.0
+        },
+        {
+          "cpu_range_ms": 3523.544358,
+          "pipeline_gpu_kernel_overlap_ms": 0.0
+        }
+      ]
+    },
+    "ftz": {
+      "expected_pid": 48184,
+      "decoded_kernel_pids": [
+        48184
+      ],
+      "pid_matches": true,
+      "frames": 2,
+      "effad_gpu_overlap": [
+        {
+          "cpu_range_ms": 780.686997,
+          "pipeline_gpu_kernel_overlap_ms": 0.0
+        },
+        {
+          "cpu_range_ms": 785.659925,
+          "pipeline_gpu_kernel_overlap_ms": 0.0
+        }
+      ]
+    }
+  },
+  "trace_stages": [
+    {
+      "scenario": "reference",
+      "stage": "inspect/capture",
+      "median_ms": 10680.405756,
+      "mean_ms": 10680.405756,
+      "n": 1
+    },
+    {
+      "scenario": "reference",
+      "stage": "inspect/frame",
+      "median_ms": 5336.8381135,
+      "mean_ms": 5336.8381135,
+      "n": 2
+    },
+    {
+      "scenario": "reference",
+      "stage": "inspect/efficientad_cpu",
+      "median_ms": 3770.9809050000003,
+      "mean_ms": 3770.9809050000003,
+      "n": 2
+    },
+    {
+      "scenario": "reference",
+      "stage": "inspect/sam",
+      "median_ms": 1375.2799845,
+      "mean_ms": 1375.2799845,
+      "n": 2
+    },
+    {
+      "scenario": "reference",
+      "stage": "inspect/load_decode",
+      "median_ms": 43.7909995,
+      "mean_ms": 43.7909995,
+      "n": 2
+    },
+    {
+      "scenario": "reference",
+      "stage": "inspect/sam_preprocess",
+      "median_ms": 31.7585655,
+      "mean_ms": 31.7585655,
+      "n": 2
+    },
+    {
+      "scenario": "reference",
+      "stage": "inspect/mask_crop",
+      "median_ms": 28.7797975,
+      "mean_ms": 28.7797975,
+      "n": 2
+    },
+    {
+      "scenario": "reference",
+      "stage": "inspect/dinov2",
+      "median_ms": 27.934509499999997,
+      "mean_ms": 27.934509499999997,
+      "n": 2
+    },
+    {
+      "scenario": "reference",
+      "stage": "inspect/sam_postprocess",
+      "median_ms": 23.529179499999998,
+      "mean_ms": 23.529179499999998,
+      "n": 2
+    },
+    {
+      "scenario": "reference",
+      "stage": "inspect/effad_preprocess",
+      "median_ms": 21.0788545,
+      "mean_ms": 21.0788545,
+      "n": 2
+    },
+    {
+      "scenario": "reference",
+      "stage": "inspect/dino_preprocess",
+      "median_ms": 7.882053000000001,
+      "mean_ms": 7.882053000000001,
+      "n": 2
+    },
+    {
+      "scenario": "reference",
+      "stage": "inspect/sam_h2d",
+      "median_ms": 3.1588190000000003,
+      "mean_ms": 3.1588190000000003,
+      "n": 2
+    },
+    {
+      "scenario": "reference",
+      "stage": "inspect/effad_gpu_roundtrip",
+      "median_ms": 1.004683,
+      "mean_ms": 1.004683,
+      "n": 2
+    },
+    {
+      "scenario": "reference",
+      "stage": "inspect/dino_h2d",
+      "median_ms": 0.488943,
+      "mean_ms": 0.488943,
+      "n": 2
+    },
+    {
+      "scenario": "reference",
+      "stage": "inspect/dino_d2h",
+      "median_ms": 0.26317,
+      "mean_ms": 0.26317,
+      "n": 2
+    },
+    {
+      "scenario": "reference",
+      "stage": "inspect/logreg",
+      "median_ms": 0.2270955,
+      "mean_ms": 0.2270955,
+      "n": 2
+    },
+    {
+      "scenario": "reference",
+      "stage": "inspect/fusion",
+      "median_ms": 0.0513815,
+      "mean_ms": 0.0513815,
+      "n": 2
+    },
+    {
+      "scenario": "ftz",
+      "stage": "inspect/capture",
+      "median_ms": 4598.325557,
+      "mean_ms": 4598.325557,
+      "n": 1
+    },
+    {
+      "scenario": "ftz",
+      "stage": "inspect/frame",
+      "median_ms": 2296.458927,
+      "mean_ms": 2296.458927,
+      "n": 2
+    },
+    {
+      "scenario": "ftz",
+      "stage": "inspect/sam",
+      "median_ms": 1356.1857805,
+      "mean_ms": 1356.1857805,
+      "n": 2
+    },
+    {
+      "scenario": "ftz",
+      "stage": "inspect/efficientad_cpu",
+      "median_ms": 783.1734610000001,
+      "mean_ms": 783.1734610000001,
+      "n": 2
+    },
+    {
+      "scenario": "ftz",
+      "stage": "inspect/load_decode",
+      "median_ms": 43.770019,
+      "mean_ms": 43.770019,
+      "n": 2
+    },
+    {
+      "scenario": "ftz",
+      "stage": "inspect/mask_crop",
+      "median_ms": 32.9656625,
+      "mean_ms": 32.9656625,
+      "n": 2
+    },
+    {
+      "scenario": "ftz",
+      "stage": "inspect/sam_postprocess",
+      "median_ms": 25.039901,
+      "mean_ms": 25.039901,
+      "n": 2
+    },
+    {
+      "scenario": "ftz",
+      "stage": "inspect/sam_preprocess",
+      "median_ms": 18.415446,
+      "mean_ms": 18.415446,
+      "n": 2
+    },
+    {
+      "scenario": "ftz",
+      "stage": "inspect/dinov2",
+      "median_ms": 13.260442999999999,
+      "mean_ms": 13.260442999999999,
+      "n": 2
+    },
+    {
+      "scenario": "ftz",
+      "stage": "inspect/effad_preprocess",
+      "median_ms": 11.721516000000001,
+      "mean_ms": 11.721516000000001,
+      "n": 2
+    },
+    {
+      "scenario": "ftz",
+      "stage": "inspect/dino_preprocess",
+      "median_ms": 6.4466845,
+      "mean_ms": 6.4466845,
+      "n": 2
+    },
+    {
+      "scenario": "ftz",
+      "stage": "inspect/sam_h2d",
+      "median_ms": 3.7730634999999997,
+      "mean_ms": 3.7730634999999997,
+      "n": 2
+    },
+    {
+      "scenario": "ftz",
+      "stage": "inspect/effad_gpu_roundtrip",
+      "median_ms": 0.6339595,
+      "mean_ms": 0.6339595,
+      "n": 2
+    },
+    {
+      "scenario": "ftz",
+      "stage": "inspect/dino_h2d",
+      "median_ms": 0.2667265,
+      "mean_ms": 0.2667265,
+      "n": 2
+    },
+    {
+      "scenario": "ftz",
+      "stage": "inspect/dino_d2h",
+      "median_ms": 0.16530050000000002,
+      "mean_ms": 0.16530050000000002,
+      "n": 2
+    },
+    {
+      "scenario": "ftz",
+      "stage": "inspect/logreg",
+      "median_ms": 0.142884,
+      "mean_ms": 0.142884,
+      "n": 2
+    },
+    {
+      "scenario": "ftz",
+      "stage": "inspect/fusion",
+      "median_ms": 0.044356,
+      "mean_ms": 0.044356,
+      "n": 2
+    }
+  ],
+  "ftz_thread_exploration": {
+    "status": "complete",
+    "flush_denormal": true,
+    "spinning": false,
+    "source": "industrial_sam.py \u00a71 + \u00a78",
+    "reference_path": "C:\\Users\\marti\\Documents\\BetterClasificator\\reports\\profiling\\transistor_binary\\20261031T131449_487581Z",
+    "weights_modified": false,
+    "concurrent_unoptimized_baseline": true,
+    "note": "FTZ changes treatment of subnormal arithmetic; verify scores/decisions before adopting.",
+    "selected_threads": 4,
+    "calls": 12,
+    "seconds": 132.2307499999879,
+    "directory": "C:\\Users\\marti\\Documents\\BetterClasificator\\reports\\profiling\\transistor_binary\\cpu_ftz_20261031T231616_798067Z",
+    "summary": [
+      {
+        "threads": 4,
+        "median_ms": 5515.67000002251,
+        "min_ms": 4963.821800018195,
+        "max_ms": 7079.892899986589,
+        "n": 3
+      },
+      {
+        "threads": 2,
+        "median_ms": 8840.72519998881,
+        "min_ms": 7342.027399979997,
+        "max_ms": 9016.527900006622,
+        "n": 3
+      },
+      {
+        "threads": 1,
+        "median_ms": 18387.678300001426,
+        "min_ms": 13800.907700002426,
+        "max_ms": 18644.22660000855,
+        "n": 3
+      }
+    ]
+  },
+  "resident_confirmation": {
+    "status": "complete",
+    "threads": 4,
+    "spinning": false,
+    "flush_denormal": true,
+    "source": "industrial_sam.py \u00a71 + \u00a78",
+    "scenario": "resident_models_threads_and_ftz_variant",
+    "profiler": false,
+    "gpu_allocated_before_gb": 3.842850816,
+    "expected_calls": 6,
+    "warmups": 2,
+    "timed_calls": 4,
+    "note": "Small confirmation, no robust p95.",
+    "latency_valid": true,
+    "peak_allocated_gb": 4.382733824,
+    "median_ms": 5038.079449994257,
+    "mean_ms": 4664.230475005752,
+    "min_ms": 3161.2943000218365,
+    "max_ms": 5419.468700012658,
+    "equivalent": true,
+    "directory": "C:\\Users\\marti\\Documents\\BetterClasificator\\reports\\profiling\\transistor_binary\\confirm_observable_20261031T233306_260227Z"
+  },
+  "subnormal_weights": {
+    "count": 749314,
+    "tensors": 19
+  },
+  "historical_baseline": {
+    "directory": "C:\\Users\\marti\\Documents\\BetterClasificator\\reports\\profiling\\transistor_binary\\20261031T131449_487581Z",
+    "median_ms": 142949.0250999952,
+    "paired_with_new_variant": false
+  },
+  "cancelled_explorations": {
+    "cpu_threads_20261031T230732_629807Z": "Incomplete: one slow warmup then time budget stop; not a thread matrix.",
+    "cpu_observable_20261031T231120_479390Z": "Cancelled cooperatively before next native call after denormal finding; original ONNX run method restored."
+  },
+  "excluded_latency_run": {
+    "directory": "confirm_observable_20261031T232002_958436Z",
+    "reason": "Duplicated GPU model copies exceeded physical VRAM; equivalence only."
+  },
+  "limitations": [
+    "Two unique frozen-test images; 2 warmup + 4 timed calls per isolated scenario; no robust p95 or full accuracy validation.",
+    "FTZ/DAZ, thread count and spinning change together; cannot isolate their individual effects.",
+    "Historical 142.95 s median agrees approximately with fresh unprofiled reference; Nsight reference host frames were much shorter, so profiler timings are not nominal latency.",
+    "Host NVTX intervals are asynchronous and nested; do not sum medians or call them GPU execution time.",
+    "CPU thread exploration overlapped an unoptimized job; only final isolated runs are sequential.",
+    "Parent notebook retained CPU-resident model objects during both children; GPU isolation, not exclusive hardware reservation.",
+    "No continuous power/thermal control, no CPU instruction sampling; observed parent Windows power plan was Silent.",
+    "FTZ may change numerical behavior outside tested cases; original production reference remains unchanged."
+  ],
+  "sources": {
+    "ort_ftz": "https://github.com/microsoft/onnxruntime/blob/main/include/onnxruntime/core/session/onnxruntime_session_options_config_keys.h",
+    "nsight_manifest": "https://developer.download.nvidia.com/compute/cuda/redist/redistrib_12.9.0.json"
+  }
+}
