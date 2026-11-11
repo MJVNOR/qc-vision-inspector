@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "C:\\Users\\marti\\.local\\bin\\uv.EXE",
+    "run",
+    "C:\\Users\\marti\\.cache\\qc-vision-tools\\nsight-systems-2025.1.3.140\\extracted\\nsight_systems-windows-x86_64-2025.1.3.140-archive\\nsight-systems\\2025.1.3\\target-windows-x64\\nsys.exe",
+    "profile",
+    "--trace=cuda,nvtx",
+    "--sample=none",
+    "--cpuctxsw=none",
+    "--capture-range=cudaProfilerApi",
+    "--capture-range-end=stop",
+    "--kill=false",
+    "--wait=primary",
+    "--force-overwrite=false",
+    "--output=reports\\profiling\\transistor_binary\\sam31_distill\\nsight_20261111T113923_554013Z\\capture",
+    "C:\\Users\\marti\\Documents\\BetterClasificator\\.venv\\Scripts\\python.exe",
+    "notebooks/industrial_sam31_distill.py"
+  ],
+  "env": {
+    "QC31D_CAPTURE": "1",
+    "QC31D_TRACE_DIR": "reports\\profiling\\transistor_binary\\sam31_distill\\nsight_20261111T113923_554013Z"
+  }
+}

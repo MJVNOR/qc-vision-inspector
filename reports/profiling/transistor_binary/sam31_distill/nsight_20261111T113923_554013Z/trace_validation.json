@@ -1,0 +1,26 @@
+{
+  "trace": "reports\\profiling\\transistor_binary\\sam31_distill\\nsight_20261111T113923_554013Z\\capture.nsys-rep",
+  "kernel_pid": 46584,
+  "frames": 2,
+  "cuda_kernels": 1794,
+  "rangos": [
+    "qc31d/capture",
+    "qc31d/dino_d2h",
+    "qc31d/dino_h2d",
+    "qc31d/dino_preprocess",
+    "qc31d/dinov2",
+    "qc31d/effad_gpu",
+    "qc31d/effad_preprocess",
+    "qc31d/frame",
+    "qc31d/fusion",
+    "qc31d/h2d",
+    "qc31d/load_decode",
+    "qc31d/logreg",
+    "qc31d/mask_crop",
+    "qc31d/mask_restore",
+    "qc31d/preprocess",
+    "qc31d/student_predict"
+  ],
+  "scores_iguales_sin_profiler": true,
+  "nota": "intervalos NVTX de host; la latencia nominal viene del §10"
+}

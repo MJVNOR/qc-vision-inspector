@@ -58,6 +58,12 @@ imbalanced: `data/processed/transistor_binary/{good:273, bad:40}` + `labels.csv`
   IDs or assume the only active session is the requested notebook.
 - `create_cell` applies on context exit: create and `run_cell` in SEPARATE
   calls. `run_cell` is async: poll cell `status` until no `running`/`queued`.
+- ALWAYS run notebooks strictly top-down in order: run cells in notebook
+  order, one segment at a time, and poll `status` until no `running`/`queued`
+  before the next segment. Never run viz/validation cells ahead of their
+  dependencies (out-of-order runs produce `NameError` noise such as
+  `dino_npz is not defined`). After any kernel churn, re-resolve cell IDs by
+  position/code before continuing.
 - NEVER read-edit the same cell twice in one context: the in-context view
   is stale, so the second `edit_cell` silently wipes the first
   (lost update). One edit per cell per context.

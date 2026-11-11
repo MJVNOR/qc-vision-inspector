@@ -9,5 +9,7 @@
   "teacher_seg_ms_median": 1560.0,
   "speedup_vs_teacher": 65.0,
   "peak_allocated_gb": 0.294053888,
-  "nota": "batch=1, incluye preparacion y vuelta de la mascara a CPU; sin profiler ni NVTX"
+  "nota": "batch=1, incluye preparacion y vuelta de la mascara a CPU; sin profiler ni NVTX",
+  "teacher_seg_ms_median_no_first": 1560.0,
+  "speedup_vs_teacher_no_first": 65.0
 }

@@ -1,0 +1,4 @@
+camino,fotos_comparadas,max_delta_fused,max_delta_effad,decisiones_iguales
+gpu,10,0.0,0.0,True
+onnx_cpu_ftz,8,0.00133551139517607,9.906291961669922e-05,True
+onnx_cpu,4,0.0008525737606988049,6.324052810668945e-05,True
