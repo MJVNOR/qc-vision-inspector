@@ -55,8 +55,14 @@ def _():
     EFFAD_VARIANT = "none"  # EffAD se queda en original (masked lo rompe: 0.625)
     # Fijadas tras Fase I: el resto del codigo asume dino=masked y effad=none sin ramificar.
     assert DINO_VARIANT == "masked" and EFFAD_VARIANT == "none", "variantes fijadas: el pipeline asume dino=masked, effad=none"
+    PREPROC_VERSION = 1  # subir al cambiar build_masked/variant_image: invalida la cache DINO
     TEST_SIZE = 0.2
     SEED = 42
+    FROZEN = {"preproc": 1, "backbone": "facebook/dinov2-base", "dino_variant": "masked",
+              "effad_variant": "none", "test_size": 0.2, "seed": 42,
+              "alpha_src": "oof", "cut_src": "oof"}  # version congelada para piloto: ningun cambio sin subir version
+    assert (PREPROC_VERSION, BACKBONE_ID, DINO_VARIANT, EFFAD_VARIANT, TEST_SIZE, SEED) == (
+        FROZEN["preproc"], FROZEN["backbone"], FROZEN["dino_variant"], FROZEN["effad_variant"], FROZEN["test_size"], FROZEN["seed"]), "tocaste la config congelada"
     SAM_PADDING = 0.08
     MIN_MASK_AREA_RATIO = 0.03
     MAX_MASK_AREA_RATIO = 0.85
@@ -115,8 +121,11 @@ def _():
         MLFLOW_EXPERIMENT,
         MLFLOW_URI,
         MODELS_DIR,
+        N_BOOT,
+        PREPROC_VERSION,
         PROFILE_DIR,
         PROJECT_NAME,
+        Path,
         SAM_CHECKPOINT,
         SAM_PADDING,
         SEED,
@@ -883,8 +892,10 @@ def _(
     BACKBONE_ID,
     DINO_VARIANT,
     MODELS_DIR,
+    PREPROC_VERSION,
     df_files,
     fingerprint,
+    good_mean_npy,
     hashlib,
     student_ckpt,
     tic,
@@ -898,10 +909,12 @@ def _(
 
     _ck = MODELS_DIR / f"dino_{DINO_VARIANT}.pt"
     _stud_sha = hashlib.sha256(student_ckpt.read_bytes()).hexdigest()[:16]  # los embeddings dependen de las mascaras: sin esto se reutilizarian tras re-destilar
+    _gsha = hashlib.sha256(good_mean_npy.read_bytes()).hexdigest()[:16]  # la media GOOD-train entra por build_masked: el split si importa
+    _dkey = {"fingerprint": fingerprint, "stud_sha": _stud_sha, "variant": DINO_VARIANT, "backbone": BACKBONE_ID, "preproc": PREPROC_VERSION, "gmean": _gsha}  # el split no entra: los embeddings no dependen de el
     _dpok = False
     if _ck.exists():
         _dpm = torch.load(_ck, map_location="cpu", weights_only=False)
-        _dpok = _dpm.get("fingerprint") == fingerprint and _dpm.get("stud_sha") == _stud_sha and _dpm.get("variant") == DINO_VARIANT
+        _dpok = all(_dpm.get(_k) == _v for _k, _v in _dkey.items())
         del _dpm
     if _dpok:
         _dp = torch.load(_ck, map_location="cpu", weights_only=False)
@@ -926,7 +939,7 @@ def _(
         import numpy as _np
 
         dino_X, dino_fnames = _np.concatenate([x.numpy() for x in _xs]), _fn
-        torch.save({"X": dino_X, "fnames": dino_fnames, "fingerprint": fingerprint, "stud_sha": _stud_sha, "variant": DINO_VARIANT}, _ck)
+        torch.save({"X": dino_X, "fnames": dino_fnames, **_dkey}, _ck)
         print("saved", dino_X.shape)
     toc("dino_embed")
     try:
@@ -1217,7 +1230,7 @@ def _(
     _em.to("cpu"); torch.cuda.empty_cache()
     print("EffAD descargado")
     toc("fusion")
-    return (fusion_npz,)
+    return effad_scores, fusion_npz
 
 
 @app.cell
@@ -1229,7 +1242,19 @@ def _(mo):
 
 
 @app.cell
-def _(FIG_DIR, MODELS_DIR, fusion_npz, mo, np, pd, plt, tic, toc):
+def _(
+    FIG_DIR,
+    MODELS_DIR,
+    N_BOOT,
+    SEED,
+    fusion_npz,
+    mo,
+    np,
+    pd,
+    plt,
+    tic,
+    toc,
+):
     # §6 Proposito: metricas test por brazo + figuras seaborn (barras + matrices + McNemar). Sin hardcodes.
     tic("eval")
     import seaborn as sns
@@ -1251,6 +1276,38 @@ def _(FIG_DIR, MODELS_DIR, fusion_npz, mo, np, pd, plt, tic, toc):
         print(_m, _rows[-1], flush=True)
     eval_df = pd.DataFrame(_rows)
     eval_df.to_csv(MODELS_DIR / "eval.csv", index=False)
+    _rng6 = np.random.default_rng(SEED)
+    _nb6 = []
+    _S6 = {"dino": "dino", "effad": "effad", "fused": "fused"}
+    for _b6 in range(N_BOOT):
+        _ib = _rng6.integers(0, len(_te), len(_te))
+        _yb = _yte[_ib]
+        if _yb.min() == _yb.max():
+            continue
+        _rb = {"boot": _b6}
+        for _m in ("dino", "effad", "fused"):
+            _sb = _fz[_S6[_m]][_te][_ib]
+            _cb = float(np.quantile(_fz[_S6[_m]][_fz["train_idx"]][_y[_fz["train_idx"]] == 0], 0.95))
+            _pb = (_sb >= _cb).astype(int)
+            _rb[_m + "_auroc"] = round(float(_auc6(_yb, _sb)), 4)
+            _rb[_m + "_recall"] = round(float((_pb[_yb == 1] == 1).mean()), 3)
+            _rb[_m + "_far"] = round(float((_pb[_yb == 0] == 1).mean()), 3)
+        _nb6.append(_rb)
+    _boot6 = pd.DataFrame(_nb6)
+    _boot6.to_csv(MODELS_DIR / "eval_bootstrap.csv", index=False)
+    _qb = _boot6.quantile([0.025, 0.975])
+    print("bootstrap %d/%d (test n=%d): fused recall IC95 [%.3f, %.3f] FAR IC95 [%.3f, %.3f]" % (
+        len(_boot6), N_BOOT, len(_te), _qb.loc[0.025, "fused_recall"], _qb.loc[0.975, "fused_recall"], _qb.loc[0.025, "fused_far"], _qb.loc[0.975, "fused_far"]))
+    _nbad = int((_yte == 1).sum()); _hbad = int((_preds["fused"][_yte == 1] == 1).sum())
+    import math as _mcp
+    if _hbad == _nbad:
+        _cpi = (0.025 ** (1.0 / _nbad), 1.0)
+    else:
+        _ph = _hbad / _nbad; _zz = 1.96
+        _ct = (_ph + _zz * _zz / (2 * _nbad)) / (1 + _zz * _zz / _nbad)
+        _hw = _zz * _mcp.sqrt(_ph * (1 - _ph) / _nbad + _zz * _zz / (4 * _nbad * _nbad)) / (1 + _zz * _zz / _nbad)
+        _cpi = (max(0.0, _ct - _hw), min(1.0, _ct + _hw))
+    print("recall fusion %d/%d: IC95 binomial [%.3f, %.3f] n=%d (el bootstrap da [1,1] por remuestrear 8 aciertos)" % (_hbad, _nbad, _cpi[0], _cpi[1], _nbad), flush=True)
     _mlab = ["dino", "effad", "fusion"]
     import math as _m6
     def _mcn6(_a, _b):
@@ -1572,6 +1629,7 @@ def _(
     tic("runtime")
     _dev8 = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     _fz8 = np.load(fusion_npz)
+    _cal8 = {k: float(_fz8["oof_" + k] if "oof_" + k in _fz8 else _fz8[k]) for k in ("alpha", "cut", "md", "id", "me", "ie")}  # OOF §22 con fallback a §5
     _mean8 = np.load(good_mean_npy)  # misma media GOOD-train que el batch
     _sess_logreg = _ort.InferenceSession(str(MODELS_DIR / "dino_logreg.onnx"))
     # Tres caminos de EffAD: GPU (produccion) y los dos ONNX-CPU que el §10 compara.
@@ -1648,9 +1706,9 @@ def _(
                 else:
                     raise ValueError("effad debe ser gpu | onnx_cpu | onnx_cpu_ftz")
             with _stage("fusion", _st, collect, nvtx):
-                _fused = float(_fz8["alpha"] * (_pdino - _fz8["md"]) / _fz8["id"]
-                               + (1 - _fz8["alpha"]) * (_peff - _fz8["me"]) / _fz8["ie"])
-                _bad = bool(_fused >= float(_fz8["cut"]))
+                _fused = float(_cal8["alpha"] * (_pdino - _cal8["md"]) / _cal8["id"]
+                               + (1 - _cal8["alpha"]) * (_peff - _cal8["me"]) / _cal8["ie"])
+                _bad = bool(_fused >= _cal8["cut"])
         return {"dino": _pdino, "effad": _peff, "fused": _fused, "bad": _bad,
                 "mask_area": _area, "bbox": _bb, "fallback": _fallback, "stages_ms": _st}
 
@@ -1673,10 +1731,10 @@ def _(
             _pdino = float(_sess_logreg.run(None, {"input": _cls.astype("float32")})[1][0][1])
             _xb = torch.from_numpy(np.asarray(_im.resize((256, 256)), dtype="float32") / 255.0).permute(2, 0, 1).unsqueeze(0)
             _peff = float(_effad_gpu(_xb.to(_dev8)).pred_score.flatten()[0])
-            _fused = float(_fz8["alpha"] * (_pdino - _fz8["md"]) / _fz8["id"]
-                           + (1 - _fz8["alpha"]) * (_peff - _fz8["me"]) / _fz8["ie"])
+            _fused = float(_cal8["alpha"] * (_pdino - _cal8["md"]) / _cal8["id"]
+                           + (1 - _cal8["alpha"]) * (_peff - _cal8["me"]) / _cal8["ie"])
         return {"dino": _pdino, "effad": _peff, "fused": _fused,
-                "bad": bool(_fused >= float(_fz8["cut"])), "mask_area": _area, "bbox": _bb}
+                "bad": bool(_fused >= _cal8["cut"]), "mask_area": _area, "bbox": _bb}
 
     def release_runtime():
         # Libera la GPU del kernel antes de lanzar el proceso hijo de Nsight (§11).
@@ -2267,9 +2325,9 @@ def _(
         "FTZ/DAZ solo afecta a la aritmetica CPU x86; el estudiante corre en GPU, donde los subnormales",
         "no tienen penalizacion. Si alguna vez se mueve a ONNX-CPU, revisar este censo primero.",
         "",
-        "## Siguiente candidato (no medido aqui)",
-        "TF32 en el encoder del estudiante (`torch.backends.cuda.matmul.allow_tf32`). Baja la mantisa a",
-        "10 bits: adoptarlo solo si las mascaras y las decisiones siguen coincidiendo (IoU >= 0.999).",
+        "## TF32 (medido en §17: NO adoptar)",
+        "IoU .99971 y decisiones iguales en 10 fotos, pero deriva de scores 0.45 con el corte en 2.33:",
+        "adoptarlo moveria el punto de operacion; requeriria recalibrar corte y revalidar todo.",
     ]
     report_path = bench_dir / "REPORT.md"
     report_path.write_text("\n".join(_lines13), encoding="utf-8")
@@ -2383,6 +2441,8 @@ def fast_batch(
     _fusedf = _fzf["alpha"] * (_pdf - _fzf["md"]) / _fzf["id"] + (1 - _fzf["alpha"]) * (_pef - _fzf["me"]) / _fzf["ie"]
     _predf = _fusedf >= float(_fzf["cut"])
     print("lote %d fotos en %.0f ms = %.1f ms/foto (vs 119 ms/foto secuencial)" % (len(_imsf), _fastms, _fastms / len(_imsf)), flush=True)
+    import json as _jsonfb
+    (MODELS_DIR / "fast_batch.json").write_text(_jsonfb.dumps({"n": len(_imsf), "total_ms": _fastms, "ms_per_photo": _fastms / len(_imsf)}, indent=2))
     _fgf, _axf = plt.subplots(len(_rowsf), 4, figsize=(13, 3.1 * len(_rowsf)), squeeze=False)
     _fgf.patch.set_facecolor("white")
     for _kf, _rf in enumerate(_rowsf.itertuples()):
@@ -2407,17 +2467,18 @@ def fast_batch(
     _gcf.collect(); torch.cuda.empty_cache()
     toc("fast_batch")
     mo.image(str(FIG_DIR / "fast_batch.png"))
-
     return
 
 
 @app.cell
 def cierre(
     MODELS_DIR,
+    PROFILE_DIR,
     bench_summary,
     fusion_npz,
     mo,
     np,
+    os,
     pd,
     student_quality,
     student_speed,
@@ -2434,7 +2495,11 @@ def cierre(
     _md.append("## Clasificacion en test (63 fotos, corte q95-train, alpha=%.2f)" % float(_fzf["alpha"]))
     for _, _rf in _evf.iterrows():
         _md.append("- %s: AUROC %.4f · recall %.3f · FAR %.3f · precBAD %.3f · F1BAD %.3f" % (_rf.method, _rf.auroc, _rf.recall, _rf.far, _rf.prec_bad, _rf.f1_bad))
-    _md.append("Fusion vs DINO: mismo recall (1.0), FAR .145 -> .091. Fusion vs EffAD: recall .875 -> 1.0.")
+    _rfd = {_r.method: _r for _, _r in _evf.iterrows()}
+    _rfd["fusion"] = _rfd.pop("fused")  # eval.csv usa "fused"
+    _md.append("Fusion vs DINO: recall %.3f -> %.3f, FAR %.3f -> %.3f. Fusion vs EffAD: recall %.3f -> %.3f." % (_rfd["dino"].recall, _rfd["fusion"].recall, _rfd["dino"].far, _rfd["fusion"].far, _rfd["effad"].recall, _rfd["fusion"].recall))
+    _md.append("Ablacion §16 (= filas dino/fusion): decision mantener ambos modelos.")
+    _md.append("Batch y produccion unificados (build_masked): el batch usaba mascara 256->1024, ahora PNG full-res como infer(). AUROC .9977->.9955 por el cambio de inputs, mismos pesos.")
     _md.append("## Segmentador destilado (acuerdo con teacher)")
     _md.append("IoU %.4f / Dice %.4f / borde F1 %.4f / vacias %.3f. Red %.1f ms, segmento %.1f ms, teacher %.0f ms -> %.1fx." % (
         _qlf.iou.mean(), _qlf.dice.mean(), _qlf.boundary_f1.mean(), _qlf.empty_mask.mean(),
@@ -2442,20 +2507,43 @@ def cierre(
     _md.append("## Latencia end-to-end por camino de EffAD (batch=1)")
     for _, _bf in _benchf.iterrows():
         _md.append("- %s: n=%d mediana %.1f ms p95 %.1f ms (%.2f fps)" % (_bf.camino, int(_bf.measurements), _bf.median_ms, _bf.p95_ms, _bf.fps_secuencial))
-    _md.append("GPU 20-35x sobre ONNX-CPU con decisiones identicas: produccion = GPU. Lote §14: 81 ms/foto vs 119 secuencial (1.47x).")
+    import json as _json15
+    _bgr = _benchf.set_index("camino")
+    _md.append("GPU %.0fx sobre el mejor ONNX-CPU con decisiones identicas: produccion = GPU." % (_bgr.loc["onnx_cpu", "median_ms"] / _bgr.loc["gpu", "median_ms"]))
+    try:
+        _fbj = _json15.loads((MODELS_DIR / "fast_batch.json").read_text())
+        _md.append("Lote §14: %.1f ms/foto vs %.1f secuencial (%.2fx)." % (_fbj["ms_per_photo"], _bgr.loc["gpu", "median_ms"], _bgr.loc["gpu", "median_ms"] / _fbj["ms_per_photo"]))
+    except Exception:
+        _md.append("Lote §14 pendiente de medir.")
     _md.append("## Traza Nsight validada: %d kernels CUDA, %d rangos, scores iguales sin profiler = %s." % (
         _trvf["cuda_kernels"], len(_trvf["rangos"]), _trvf["scores_iguales_sin_profiler"]))
-    _md.append("Limites: test con 8 BAD (recall 1.0 = 8/8); bench balanceado, no prevalencia real; speed.json sin no_first hasta reentrenar.")
-    _md.append("## Como inferir en produccion (segun Nsight+NVTX, 2 frames, 1794 kernels)")
-    _md.append("NVTX host mediano: frame 110 ms = load_decode 25.7 + effad_gpu 23.8 + student 22.2 + mask_crop 17.8 + dinov2 8.1 + effad_pre 5.2 + dino_pre 4.6, resto <2 ms. Los rangos se anidan: no se suman.")
+    _md.append("Limites: test con 8 BAD (recall 1.0 = 8/8); bench balanceado, no prevalencia real; alpha/corte in-sample (ver OOF §22); test usado en varias decisiones informales.")
+    _md.append("## Como inferir en produccion (segun Nsight+NVTX, %d frames, %d kernels)" % (_trvf["frames"], _trvf["cuda_kernels"]))
+    _nvs = pd.read_csv(os.path.join(os.path.dirname(_trvf["trace"]), "nvtx_summary.csv"), index_col=0)
+    _top15 = ", ".join("%s %.1f" % (_s.replace("qc31d/", ""), _nvs.loc[_s, "median"]) for _s in ("qc31d/frame", "qc31d/load_decode", "qc31d/effad_gpu", "qc31d/student_predict", "qc31d/mask_crop", "qc31d/dinov2", "qc31d/effad_preprocess", "qc31d/dino_preprocess"))
+    _md.append("NVTX host mediano: " + _top15 + ". Los rangos se anidan: no se suman.")
     _md.append("1. Modelos residentes en GPU (estudiante+DINO+EffAD cargados una vez); recargar por frame cuesta segundos.")
     _md.append("2. Calentamiento fuera de servicio (3 frames): los kernels frios cuestan ~60% extra (medido §14: 134 -> 81 ms).")
     _md.append("3. Sin profiler ni NVTX en linea: la equivalencia demuestra que no cambian el resultado, solo perturban tiempos.")
     _md.append("4. Atacar load_decode+mask_crop (~43 ms, CPU/PIL): prefetch con workers y resize en GPU antes que tocar modelos.")
-    _md.append("5. EffAD pendiente de ablacion: 24 ms/frame por alpha .05; si sale, -27% latencia y un modelo menos.")
+    _md.append("5. EffAD decidido en ablacion §16 (se mantiene): 24 ms/frame por alpha .05 y FAR -.054.")
     _md.append("Conclusion NVTX: el top es CPU, no GPU. De ~110 ms/frame, ~53 ms son fontaneria CPU (decode, 3 resizes PIL, mascara a CPU) y ~54 ms calculo GPU. GPU mas rapida no mueve la aguja; recortar fontaneria o un modelo entero, si.")
+    _btf = pd.read_csv(MODELS_DIR / "eval_bootstrap.csv").quantile([0.025, 0.975])
+    _ocf = dict(np.load(MODELS_DIR / "calib_oof.npz"))
+    _e63f = pd.read_csv(PROFILE_DIR / "equivalencia63.csv")
+    _md.append("## Fuera de muestra y robustez")
+    _md.append("Bootstrap 200 (test 63): fused recall IC95 [%.3f, %.3f] FAR IC95 [%.3f, %.3f]." % (
+        _btf.loc[0.025, "fused_recall"], _btf.loc[0.975, "fused_recall"], _btf.loc[0.025, "fused_far"], _btf.loc[0.975, "fused_far"]))
+    _md.append("OOF train (3 folds): alpha=%.2f recall=%.3f far=%.3f (in-sample alpha=%.2f)." % (
+        float(_ocf["alpha"]), float(_ocf["rec"]), float(_ocf["far"]), float(_fzf["alpha"])))
+    _md.append("Equivalencia infer-vs-eval: %d/%d fotos coinciden." % (int(_e63f.match.sum()), len(_e63f)))
+    _md.append("## Cambios de hoy")
+    _md.append("- Cache DINO con sha de checkpoint + backbone + preproc; el split no entra (embeddings independientes).")
+    _md.append("- build_masked unico: batch y produccion ven la misma imagen.")
+    _md.append("- McNemar correcto (acierto/error) en §6 y §16; bootstrap 200 con IC95 en §6.")
+    _md.append("- Equivalencia infer-vs-eval en los 63 (§21); calibracion OOF en §22; fallos 032/033 inspeccionados (§20).")
+    _md.append("- TF32 descartado (deriva 0.45); ablacion mantiene ambos; q95 validado para cero-miss.")
     mo.md(chr(10).join(_md))
-
     return
 
 
@@ -2490,8 +2578,10 @@ def ablacion(
         _rowsa.append({"brazo": _ma, "auroc": round(float(_auca(_ytea, _sa[_tea])), 4),
                        "recall": round(float((_pa[_ytea == 1] == 1).mean()), 3),
                        "far": round(float((_pa[_ytea == 0] == 1).mean()), 3)})
-    _n01a = int(((_pra["dino"] == 0) & (_pra["fusion"] == 1)).sum())
-    _n10a = int(((_pra["dino"] == 1) & (_pra["fusion"] == 0)).sum())
+    # McNemar sobre acierto/error vs etiqueta real (igual que §6).
+    _cda, _cdb = (_pra["dino"] == _ytea), (_pra["fusion"] == _ytea)
+    _n01a = int(((_cda == 0) & (_cdb == 1)).sum())
+    _n10a = int(((_cda == 1) & (_cdb == 0)).sum())
     _na = _n01a + _n10a
     _mcna = 1.0 if _na == 0 else round(min(1.0, 2.0 * sum(_matha.comb(_na, _kk) for _kk in range(0, min(_n01a, _n10a) + 1)) / 2.0 ** _na), 4)
     print(pd.DataFrame(_rowsa).to_string(index=False))
@@ -2502,7 +2592,7 @@ def ablacion(
     print("frame ejemplo: total %.1f ms, sin etapas effad %.1f ms (ahorro %.0f%%)" % (_totb, _sineb, 100 * (1 - _sineb / _totb)), flush=True)
     _drec = _rowsa[1]["recall"] - _rowsa[0]["recall"]
     _dfar = _rowsa[1]["far"] - _rowsa[0]["far"]
-    print("veredicto: quitar EffAD mueve recall %+.3f y FAR %+.3f a cambio de ~%.0f%% menos latencia" % (_drec, _dfar, 100 * (1 - _sineb / _totb)), flush=True)
+    print("veredicto: añadir EffAD sobre DINO mueve recall %+.3f y FAR %+.3f a cambio de ~%.0f%% mas latencia" % (_drec, _dfar, 100 * (1 - _sineb / _totb)), flush=True)
     print("decision: se mantienen ambos modelos (FAR .091 justifica el coste)", flush=True)
     _fab, _axb = plt.subplots(figsize=(7, 4))
     _xab = range(len(_rowsa))
@@ -2514,7 +2604,6 @@ def ablacion(
     print("saved ablacion.png")
     toc("ablacion")
     mo.image(str(FIG_DIR / "ablacion.png"))
-
     return
 
 
@@ -2572,7 +2661,6 @@ def tf32(
         import gc as _gc3
         _gc3.collect(); torch.cuda.empty_cache()
     toc("tf32")
-
     return
 
 
@@ -2590,7 +2678,6 @@ def speed_nofirst(CAPTURE_MODE, MODELS_DIR, mo, pd, sam_masks):
     (MODELS_DIR / "student" / "speed.json").write_text(_json18.dumps(_sp18, indent=2))
     print("speed.json: teacher_no_first=%.0f ms speedup_no_first=%.1fx (legacy %.0f ms -> %.1fx)" % (
         _tmed, _tmed / _smed, _sp18["teacher_seg_ms_median"], _sp18["speedup_vs_teacher"]))
-
     return
 
 
@@ -2612,7 +2699,6 @@ def corte_recall(CAPTURE_MODE, fusion_npz, mo, np):
             _nm, float((_pr[_yt == 1] == 1).mean()), float((_pr[_yt == 0] == 1).mean()),
             int((_pr[_yt == 1] == 1).sum()), int((_yt == 1).sum()), int((_pr[_yt == 0] == 1).sum()), int((_yt == 0).sum())), flush=True)
     print("nota: recall-1.0 en train con 32 BAD; en test solo hay 8 BAD.", flush=True)
-
     return
 
 
@@ -2664,6 +2750,150 @@ def fallos_seg(
     print("saved fallos_segmentador.png")
     toc("fallos_seg")
     mo.image(str(FIG_DIR / "fallos_segmentador.png"))
+    return
+
+
+@app.cell
+def equiv63(
+    CAPTURE_MODE,
+    PROFILE_DIR,
+    fusion_npz,
+    infer,
+    mo,
+    np,
+    pd,
+    test_files,
+    tic,
+    toc,
+):
+    # §21 Proposito: equivalencia produccion (infer) vs evaluacion (fusion.npz) en los 63 del test.
+    mo.stop(CAPTURE_MODE, mo.md("omitida en modo captura"))
+    tic("equiv63")
+    _fz6 = np.load(fusion_npz)
+    _pos6 = {f: i for i, f in enumerate(_fz6["fnames"])}; _cut6 = float(_fz6["cut"])
+    _r63 = []
+    for _rk, _rr in enumerate(test_files.itertuples()):
+        _o63 = infer(_rr.path)
+        _i63 = _pos6[_rr.filename]
+        _tol63 = {"dino": 1e-6, "effad": 1e-2, "fused": 1e-2}  # EffAD-GPU no es bit-determinista entre batch y frame; DINO si
+        _m63 = all(abs(_o63[_k63] - float(_fz6[{"dino": "dino", "effad": "effad", "fused": "fused"}[_k63]][_i63])) < _tol63[_k63] for _k63 in ("dino", "effad", "fused")) and _o63["bad"] == bool(_fz6["fused"][_i63] >= _cut6)
+        _r63.append({"filename": _rr.filename, "label": _rr.label, "match": _m63,
+                     "dino": _o63["dino"], "effad": _o63["effad"], "fused": _o63["fused"], "bad": _o63["bad"]})
+        if (_rk + 1) % 20 == 0:
+            print("equiv63 %d/%d" % (_rk + 1, len(test_files)), flush=True)
+    _eq63 = pd.DataFrame(_r63)
+    _y63 = (_eq63.label == "bad").to_numpy(int); _pb63 = _eq63.bad.to_numpy(int)
+    print("coinciden %d/%d; recall=%.3f far=%.3f" % (_eq63.match.sum(), len(_eq63), float((_pb63[_y63 == 1] == 1).mean()), float((_pb63[_y63 == 0] == 1).mean())), flush=True)
+    assert bool(_eq63.match.all()), "infer() diverge de eval en %d fotos" % int((~_eq63.match).sum())
+    _eq63.to_csv(PROFILE_DIR / "equivalencia63.csv", index=False)
+    print("saved equivalencia63.csv")
+    toc("equiv63")
+    return
+
+
+@app.cell
+def calib_oof(
+    CAPTURE_MODE,
+    MODELS_DIR,
+    SEED,
+    dino_X,
+    effad_scores,
+    fusion_npz,
+    mo,
+    np,
+    tic,
+    toc,
+):
+    # §22 Proposito: calibracion fuera de muestra (alpha/corte con scores OOF de train; EffAD fijo por coste).
+    mo.stop(CAPTURE_MODE, mo.md("omitida en modo captura"))
+    tic("calib_oof")
+    from sklearn.linear_model import LogisticRegression as _LRC
+    from sklearn.model_selection import StratifiedKFold as _SKF
+    _fzc = np.load(fusion_npz)
+    _yc = _fzc["y"].astype(int)
+    _trc = list(_fzc["train_idx"])
+    _Xtr = dino_X[_trc]; _ytr = _yc[_trc]
+    _oof = np.zeros(len(_trc))
+    for _tr, _va in _SKF(n_splits=3, shuffle=True, random_state=SEED).split(_Xtr, _ytr):
+        _clc = _LRC(class_weight="balanced", C=1.0, max_iter=2000).fit(_Xtr[_tr], _ytr[_tr])
+        _oof[_va] = _clc.predict_proba(_Xtr[_va])[:, 1]
+    _gd = [i for i in range(len(_trc)) if _ytr[i] == 0]
+    _mdc = float(np.median(_oof[_gd])); _idc = float(max(np.subtract(*np.percentile(_oof[_gd], [75, 25])), 1e-9))
+    _esc = effad_scores[_trc]
+    _mec = float(np.median(_esc[_gd])); _iec = float(max(np.subtract(*np.percentile(_esc[_gd], [75, 25])), 1e-9))
+    _doo = (_oof - _mdc) / _idc; _eoo = (_esc - _mec) / _iec
+    _bst = None
+    for _ac in np.arange(0, 1.05, 0.05).round(2):
+        _fc = _ac * _doo + (1 - _ac) * _eoo
+        _hc = float(np.quantile(_fc[[i for i in _gd]], 0.95))
+        _pc = (_fc >= _hc).astype(int)
+        _rc = float((_pc[_ytr == 1] == 1).mean()); _fc_ = float((_pc[_ytr == 0] == 1).mean())
+        if _bst is None or (_rc, -_fc_) > (_bst[1], -_bst[2]):
+            _bst = (float(_ac), _rc, _fc_, _hc)
+    print("OOF train (3 folds): alpha=%.2f recall=%.3f far=%.3f cut=%.3f" % _bst, flush=True)
+    print("in-sample §5: alpha=%.2f cut=%.3f" % (float(_fzc["alpha"]), float(_fzc["cut"])), flush=True)
+    np.savez(MODELS_DIR / "calib_oof.npz", oof=_oof, alpha=_bst[0], rec=_bst[1], far=_bst[2], cut=_bst[3], train_idx=np.array(_trc))
+    print("saved calib_oof.npz (EffAD fijo: reentrenarlo por fold es inviable)")
+    _fz5 = dict(np.load(fusion_npz))
+    _fz5.update({"oof_alpha": _bst[0], "oof_cut": _bst[3], "oof_md": _mdc, "oof_id": _idc, "oof_me": _mec, "oof_ie": _iec})
+    np.savez(fusion_npz, **_fz5)
+    print("fusion.npz: calibracion OOF integrada (infer la prefiere con fallback a §5)")
+    toc("calib_oof")
+    return
+
+
+@app.cell
+def _():
+    return
+
+
+@app.cell
+def piloto(
+    CAPTURE_MODE,
+    FIG_DIR,
+    Image,
+    Path,
+    infer,
+    mo,
+    pd,
+    plt,
+    tic,
+    toc,
+    torch,
+):
+    # §23 Proposito: piloto con fotos nuevas sin etiquetas (infer congelado + rejilla). No reajustar el corte con estos datos.
+    NEW_DIR = Path("data/new/transistor_binary")
+    mo.stop(CAPTURE_MODE, mo.md("omitida en modo captura"))
+    tic("piloto")
+    import glob as _gbp
+    _imgs = sorted(f for f in _gbp.glob(str(NEW_DIR / "*")) if Path(f).is_file())
+    if not _imgs:
+        print("sin fotos nuevas en %s: criterio de piloto: 0 misses en BAD nuevas y FAR en linea con test (.091)" % NEW_DIR)
+        mo.md("**Sin fotos nuevas en `data/new/transistor_binary`.** Criterio de piloto: 0 misses en BAD nuevas y FAR en línea con test.")
+    else:
+        _prow = []
+        with torch.inference_mode():
+            for _fp in _imgs:
+                _o23 = infer(_fp)
+                _prow.append({"foto": Path(_fp).name, "dino": round(_o23["dino"], 3), "effad": round(_o23["effad"], 4),
+                               "fusion": round(_o23["fused"], 2), "pred": "BAD" if _o23["bad"] else "GOOD"})
+                print("%s -> %s (f=%.2f)" % (_prow[-1]["foto"], _prow[-1]["pred"], _prow[-1]["fusion"]), flush=True)
+        _pdf23 = pd.DataFrame(_prow)
+        print("piloto: %d fotos, %d BAD / %d GOOD" % (len(_pdf23), int((_pdf23.pred == "BAD").sum()), int((_pdf23.pred == "GOOD").sum())))
+        _f23, _ax23 = plt.subplots(len(_pdf23), 2, figsize=(9, 2.6 * len(_pdf23)), squeeze=False)
+        _f23.patch.set_facecolor("white")
+        for _k23, _fp in enumerate(_imgs):
+            _im23 = Image.open(_fp).convert("RGB")
+            _ax23[_k23][0].imshow(_im23)
+            _ax23[_k23][0].set_title(Path(_fp).name, fontsize=8, color="black")
+            _ax23[_k23][1].imshow(_im23)
+            _ax23[_k23][1].set_title("%s d=%.3f e=%.4f f=%.2f" % (_pdf23.pred[_k23], _pdf23.dino[_k23], _pdf23.effad[_k23], _pdf23.fusion[_k23]), fontsize=8, color="black")
+            [_aa.axis("off") for _aa in _ax23[_k23]]
+        _f23.suptitle("Piloto: predicciones congeladas (sin reajustar corte)", fontsize=11, color="black")
+        _f23.tight_layout(); _f23.savefig(FIG_DIR / "piloto.png", dpi=90)
+        print("saved piloto.png")
+        mo.image(str(FIG_DIR / "piloto.png"))
+    toc("piloto")
 
     return
 
