@@ -1,0 +1,70 @@
+{
+  "escenarios": [
+    {
+      "camino": "gpu",
+      "measurements": 30,
+      "median_ms": 127.15290000051027,
+      "p95_ms": 132.87440999938553,
+      "mean_ms": 126.97237999988526,
+      "min_ms": 119.77680000200053,
+      "max_ms": 134.6849999972619,
+      "fps_secuencial": 7.875728563967248,
+      "peak_allocated_gb": 0.77372928,
+      "peak_reserved_gb": 0.92274688
+    },
+    {
+      "camino": "onnx_cpu_ftz",
+      "measurements": 8,
+      "median_ms": 2609.981199999311,
+      "p95_ms": 2841.0471049995977,
+      "mean_ms": 2642.39227500002,
+      "min_ms": 2522.021400000085,
+      "max_ms": 2928.889299997536,
+      "fps_secuencial": 0.37844494531001927,
+      "peak_allocated_gb": 0.715597824,
+      "peak_reserved_gb": 0.92274688
+    },
+    {
+      "camino": "onnx_cpu",
+      "measurements": 4,
+      "median_ms": 3511.827499998617,
+      "p95_ms": 4166.485014999853,
+      "mean_ms": 3602.22634999991,
+      "min_ms": 3159.494400002586,
+      "max_ms": 4225.755999999819,
+      "fps_secuencial": 0.27760609768456807,
+      "peak_allocated_gb": 0.715597824,
+      "peak_reserved_gb": 0.92274688
+    }
+  ],
+  "acuerdo": [
+    {
+      "camino": "gpu",
+      "fotos_comparadas": 10,
+      "max_delta_fused": 0.0,
+      "max_delta_effad": 0.0,
+      "decisiones_iguales": true
+    },
+    {
+      "camino": "onnx_cpu_ftz",
+      "fotos_comparadas": 8,
+      "max_delta_fused": 0.00133551139517607,
+      "max_delta_effad": 9.906291961669922e-05,
+      "decisiones_iguales": true
+    },
+    {
+      "camino": "onnx_cpu",
+      "fotos_comparadas": 4,
+      "max_delta_fused": 0.0008525737606988049,
+      "max_delta_effad": 6.324052810668945e-05,
+      "decisiones_iguales": true
+    }
+  ],
+  "warmups": 5,
+  "imagenes_unicas": 10,
+  "batch": 1,
+  "profiler": false,
+  "nvtx_en_medicion": false,
+  "muestreo": "subconjunto balanceado del test congelado; no es la prevalencia de produccion",
+  "incluye": "lectura+decodificacion, H2D/D2H, mascara a CPU, postproceso y fusion"
+}

@@ -26,3 +26,11 @@ reports/profiling/**/*.sqlite
 
 # Distillation runtime: dataset copies, checkpoints, engines and vendored models.
 models/*/sam_distillation/
+
+# Pipeline destilado (industrial_sam31_distill): pesos y caches regenerables desde la libreta.
+# Se versionan los CSV/JSON/figuras y el LogReg; no los checkpoints ni las mascaras PNG.
+models/*/prod_sam31_distill/**/*.pt
+models/*/prod_sam31_distill/**/*.ckpt
+models/*/prod_sam31_distill/effad.onnx
+models/*/prod_sam31_distill/student/masks_png/
+models/*/prod_sam31_distill/teacher/masks/

@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "mlflow-mcp": {
+      "command": "uvx",
+      "args": ["--from", "mlflow[mcp]>=3.5.1", "mlflow", "mcp", "run"],
+      "env": {
+        "MLFLOW_TRACKING_URI": "sqlite:///mlflow.db",
+        "MLFLOW_MCP_TOOLS": "all"
+      }
+    },
+    "marimo": {
+      "type": "http",
+      "url": "http://localhost:2718/mcp/server"
+    }
+  }
+}

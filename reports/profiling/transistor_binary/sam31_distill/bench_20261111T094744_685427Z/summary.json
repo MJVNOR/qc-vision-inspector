@@ -1,0 +1,70 @@
+{
+  "escenarios": [
+    {
+      "camino": "gpu",
+      "measurements": 30,
+      "median_ms": 122.77949999770499,
+      "p95_ms": 128.00941999958013,
+      "mean_ms": 123.53988666691293,
+      "min_ms": 116.86910000207718,
+      "max_ms": 129.32739999814657,
+      "fps_secuencial": 8.094551702934538,
+      "peak_allocated_gb": 0.77372928,
+      "peak_reserved_gb": 0.92274688
+    },
+    {
+      "camino": "onnx_cpu_ftz",
+      "measurements": 8,
+      "median_ms": 4502.816799998982,
+      "p95_ms": 5355.5187450007,
+      "mean_ms": 4196.178249999775,
+      "min_ms": 2584.8329000000376,
+      "max_ms": 5440.415200002462,
+      "fps_secuencial": 0.23831208791000563,
+      "peak_allocated_gb": 0.715597824,
+      "peak_reserved_gb": 0.92274688
+    },
+    {
+      "camino": "onnx_cpu",
+      "measurements": 4,
+      "median_ms": 3671.363100000235,
+      "p95_ms": 3834.881800000585,
+      "mean_ms": 3688.550474999829,
+      "min_ms": 3553.2601999984763,
+      "max_ms": 3858.2155000003695,
+      "fps_secuencial": 0.27110920855706777,
+      "peak_allocated_gb": 0.715597824,
+      "peak_reserved_gb": 0.92274688
+    }
+  ],
+  "acuerdo": [
+    {
+      "camino": "gpu",
+      "fotos_comparadas": 10,
+      "max_delta_fused": 0.0,
+      "max_delta_effad": 0.0,
+      "decisiones_iguales": true
+    },
+    {
+      "camino": "onnx_cpu_ftz",
+      "fotos_comparadas": 8,
+      "max_delta_fused": 0.00133551139517607,
+      "max_delta_effad": 9.906291961669922e-05,
+      "decisiones_iguales": true
+    },
+    {
+      "camino": "onnx_cpu",
+      "fotos_comparadas": 4,
+      "max_delta_fused": 0.0008525737606988049,
+      "max_delta_effad": 6.324052810668945e-05,
+      "decisiones_iguales": true
+    }
+  ],
+  "warmups": 5,
+  "imagenes_unicas": 10,
+  "batch": 1,
+  "profiler": false,
+  "nvtx_en_medicion": false,
+  "muestreo": "subconjunto balanceado del test congelado; no es la prevalencia de produccion",
+  "incluye": "lectura+decodificacion, H2D/D2H, mascara a CPU, postproceso y fusion"
+}

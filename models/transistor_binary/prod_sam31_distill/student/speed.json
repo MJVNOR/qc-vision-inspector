@@ -1,0 +1,13 @@
+{
+  "checkpoint_sha256_16": "eef17457d57b7d83",
+  "side": 512,
+  "images": 313,
+  "fwd_cuda_ms_median": 22.61689567565918,
+  "fwd_cuda_ms_p95": 29.38772506713867,
+  "seg_ms_median": 24.0,
+  "seg_ms_p95": 30.92599999999999,
+  "teacher_seg_ms_median": 1560.0,
+  "speedup_vs_teacher": 65.0,
+  "peak_allocated_gb": 0.294053888,
+  "nota": "batch=1, incluye preparacion y vuelta de la mascara a CPU; sin profiler ni NVTX"
+}

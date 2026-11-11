@@ -1,0 +1,8 @@
+{
+  "kernel_pid": 18584,
+  "frames": 2,
+  "nvtx": true,
+  "batch": 1,
+  "effad": "gpu",
+  "nota": "duraciones bajo profiler, diagnosticas"
+}

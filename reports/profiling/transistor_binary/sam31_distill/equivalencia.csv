@@ -1,0 +1,3 @@
+filename,label,equivalente,bad,max_delta
+good_228.png,good,True,False,0.0
+bad_024.png,bad,True,True,0.0
