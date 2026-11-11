@@ -1,0 +1,19 @@
+{
+  "candidate": "yolo26n-seg",
+  "backend": "tensorrt_fp16",
+  "validated": true,
+  "kernel_pid": 15588,
+  "frames": 4,
+  "cuda_kernel_count": 312,
+  "ranges": [
+    "distill/capture",
+    "distill/frame",
+    "distill/h2d",
+    "distill/load_decode",
+    "distill/postprocess_d2h",
+    "distill/preprocess",
+    "distill/student_predict"
+  ],
+  "min_mask_iou_vs_unprofiled": 1.0,
+  "note": "Host NVTX intervals can nest; not nominal latency."
+}

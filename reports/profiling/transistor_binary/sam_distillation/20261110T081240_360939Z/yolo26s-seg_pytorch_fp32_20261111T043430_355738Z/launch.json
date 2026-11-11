@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "C:\\Users\\marti\\.local\\bin\\uv.EXE",
+    "run",
+    "C:\\Users\\marti\\.cache\\qc-vision-tools\\nsight-systems-2025.1.3.140\\extracted\\nsight_systems-windows-x86_64-2025.1.3.140-archive\\nsight-systems\\2025.1.3\\target-windows-x64\\nsys.exe",
+    "profile",
+    "--trace=cuda,nvtx",
+    "--sample=none",
+    "--cpuctxsw=none",
+    "--capture-range=cudaProfilerApi",
+    "--capture-range-end=stop",
+    "--kill=false",
+    "--wait=primary",
+    "--force-overwrite=false",
+    "--output=C:\\Users\\marti\\Documents\\BetterClasificator\\reports\\profiling\\transistor_binary\\sam_distillation\\20261110T081240_360939Z\\yolo26s-seg_pytorch_fp32_20261111T043430_355738Z\\capture",
+    "C:\\Users\\marti\\Documents\\BetterClasificator\\.venv\\Scripts\\python.exe",
+    "notebooks/industrial_sam_distill.py"
+  ]
+}

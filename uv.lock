@@ -312,17 +312,23 @@ dependencies = [
     { name = "mlflow", extra = ["mcp"] },
     { name = "nbconvert" },
     { name = "nbformat" },
+    { name = "omegaconf" },
     { name = "onnx" },
     { name = "onnxruntime" },
     { name = "onnxscript" },
+    { name = "onnxsim" },
+    { name = "onnxslim" },
     { name = "optuna" },
     { name = "pandas" },
     { name = "pillow" },
     { name = "scikit-learn" },
     { name = "seaborn" },
+    { name = "segment-anything" },
     { name = "skl2onnx" },
+    { name = "tensorrt-cu12", marker = "python_full_version < '3.14'" },
     { name = "timm" },
     { name = "torch" },
+    { name = "torchprofile" },
     { name = "torchvision" },
     { name = "transformers" },
     { name = "ultralytics" },
@@ -338,17 +344,23 @@ requires-dist = [
     { name = "mlflow", extras = ["mcp"], specifier = ">=3.17" },
     { name = "nbconvert", specifier = ">=7.17.1" },
     { name = "nbformat", specifier = ">=5.11.1" },
+    { name = "omegaconf", specifier = ">=2.3.1" },
     { name = "onnx", specifier = ">=1.23.2" },
     { name = "onnxruntime", specifier = ">=1.30.0" },
     { name = "onnxscript", specifier = ">=0.7.2" },
+    { name = "onnxsim", specifier = ">=0.8.1" },
+    { name = "onnxslim", specifier = ">=0.1.99" },
     { name = "optuna", specifier = ">=5.0.0" },
     { name = "pandas" },
     { name = "pillow" },
     { name = "scikit-learn" },
     { name = "seaborn", specifier = ">=0.13.2" },
+    { name = "segment-anything", specifier = ">=1.0" },
     { name = "skl2onnx", specifier = ">=1.20.0" },
+    { name = "tensorrt-cu12", marker = "python_full_version < '3.14'", specifier = "==10.13.3.9.post1", index = "https://pypi.nvidia.com/" },
     { name = "timm" },
     { name = "torch", index = "https://download.pytorch.org/whl/cu128" },
+    { name = "torchprofile", specifier = ">=0.1.0" },
     { name = "torchvision", index = "https://download.pytorch.org/whl/cu128" },
     { name = "transformers", specifier = ">=4.56" },
     { name = "ultralytics", specifier = ">=8.4.176" },
@@ -880,7 +892,7 @@ cublas = [
     { name = "nvidia-cublas-cu12", marker = "sys_platform == 'linux'" },
 ]
 cudart = [
-    { name = "nvidia-cuda-runtime-cu12", marker = "sys_platform == 'linux'" },
+    { name = "nvidia-cuda-runtime-cu12", marker = "(python_full_version < '3.14' and sys_platform == 'win32') or sys_platform == 'linux'" },
 ]
 cufft = [
     { name = "nvidia-cufft-cu12", marker = "sys_platform == 'linux'" },
@@ -3011,6 +3023,7 @@ source = { registry = "https://pypi.org/simple" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/7c/75/f865a3b236e4647605ea34cc450900854ba123834a5f1598e160b9530c3a/nvidia_cuda_runtime_cu12-12.8.90-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:52bf7bbee900262ffefe5e9d5a2a69a30d97e2bc5bb6cc866688caa976966e3d", size = 965265, upload-time = "2025-03-07T01:39:43.533Z" },
     { url = "https://files.pythonhosted.org/packages/0d/9b/a997b638fcd068ad6e4d53b8551a7d30fe8b404d6f1804abf1df69838932/nvidia_cuda_runtime_cu12-12.8.90-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:adade8dcbd0edf427b7204d480d6066d33902cab2a4707dcfc48a2d0fd44ab90", size = 954765, upload-time = "2025-03-07T01:40:01.615Z" },
+    { url = "https://files.pythonhosted.org/packages/30/a5/a515b7600ad361ea14bfa13fb4d6687abf500adc270f19e89849c0590492/nvidia_cuda_runtime_cu12-12.8.90-py3-none-win_amd64.whl", hash = "sha256:c0c6027f01505bfed6c3b21ec546f69c687689aad5f1a377554bc6ca4aa993a8", size = 944318, upload-time = "2025-03-07T01:51:01.794Z" },
 ]
 
 [[package]]
@@ -3237,6 +3250,39 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/0a/01/3e3fab8d643ca097ea4aa9e51246643699dfaaa0650589744fe44bc46651/onnxscript-0.7.2.tar.gz", hash = "sha256:2c664f6383d10f332a4d47b2876dcab16dba84909fe703656b19abc281fda165", size = 646719, upload-time = "2026-09-09T17:06:44.567Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/b9/3b/06260997cdc41138e58718588a6c87d0eb342bbe0dda8a6aae91d163c384/onnxscript-0.7.2-py3-none-any.whl", hash = "sha256:d0e7121c6a1eefd608058928e111cbdb76709f70d269ff0d07aee493bd1d13c9", size = 754215, upload-time = "2026-09-09T17:06:46.442Z" },
+]
+
+[[package]]
+name = "onnxsim"
+version = "0.8.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "onnx" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/7e/3c/cbfc805b3716cd7ce4238a0c6980b75227afb87cdccd22f34e986792f8e4/onnxsim-0.8.1.tar.gz", hash = "sha256:101c7b3d31e39c609cdfafddb4d3586572435f76f0e1a191d95d0a6797e1b0a4", size = 14687366, upload-time = "2026-10-09T07:10:54.196Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/2a/56/ef492e16eea7d2f85579f81264bdd41a3058c808ebf31a15340a78589d2f/onnxsim-0.8.1-cp312-abi3-macosx_13_0_arm64.whl", hash = "sha256:153336c674ff7c055f18e0d964e03ed89c1767e0ec793fe050519af14e0fe259", size = 8857461, upload-time = "2026-10-09T07:10:37.429Z" },
+    { url = "https://files.pythonhosted.org/packages/02/69/c96ceb1fcb57ad947759833b2106c93db87f0cf689b86e39279ff74dffc1/onnxsim-0.8.1-cp312-abi3-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:61ba4b7c4174b16d720ce57c1fd4d16fbd951ece2d4f89f3aee3d41628ad8c24", size = 8987234, upload-time = "2026-10-09T07:10:40.563Z" },
+    { url = "https://files.pythonhosted.org/packages/a7/db/8135f2d1eb4ce4235d3ea2deaa9ddf518f455ad3cfe1b07f3c3a07bd2d41/onnxsim-0.8.1-cp312-abi3-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:eaff55bf7a238548cf79b18a539859870029b431a0b2aa67d4425c03183a2281", size = 9665232, upload-time = "2026-10-09T07:10:43.339Z" },
+    { url = "https://files.pythonhosted.org/packages/2d/22/96011ef5b0ec7b13e787a7df7eed50e5b42f11db4e1ad364eec8652dbf77/onnxsim-0.8.1-cp312-abi3-pyemscripten_2025_0_wasm32.whl", hash = "sha256:92a377f520b251b4418e37b7c6a44d8c1b13d49b5225c3d483825b8c4c765479", size = 5855007, upload-time = "2026-10-09T07:10:45.999Z" },
+    { url = "https://files.pythonhosted.org/packages/ba/7b/61d6a4fa155a52ea7bc16accc7af50afaf4c0e20c38415673f6452cbaf5c/onnxsim-0.8.1-cp312-abi3-win_amd64.whl", hash = "sha256:a7db3a590d1ea86dcbc42b02cc63ae742bd3ec5cd36eefbad00ae1d5a6782887", size = 7981832, upload-time = "2026-10-09T07:10:48.336Z" },
+    { url = "https://files.pythonhosted.org/packages/24/bf/e8810a8b5594458e354f8cd39dc83e05287c7cbc5d45d002aba050651735/onnxsim-0.8.1-cp314-cp314t-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:e896f3a42bc44d8f63256bd5ee13312bc75d3232b89d095b84a65f5457a09fc3", size = 9670413, upload-time = "2026-10-09T07:10:50.829Z" },
+]
+
+[[package]]
+name = "onnxslim"
+version = "0.1.99"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "colorama" },
+    { name = "ml-dtypes" },
+    { name = "onnx" },
+    { name = "packaging" },
+    { name = "sympy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/fe/ac/8610e7274fe6bf26b6269f91de5a2acd03bfa2133153e691fc93f71a6f64/onnxslim-0.1.99.tar.gz", hash = "sha256:d662d6a6c384b64fe7464527a5865020c4335f8619a4a1272512ca0cc266867c", size = 616093, upload-time = "2026-11-04T03:13:12.228Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/76/d1/063874f0c02d3c00a169bce3ccf24a4f42ffbc4263d4b1593499c39f7a4c/onnxslim-0.1.99-py3-none-any.whl", hash = "sha256:6c6a3ddbbb7c5426f8f9c38ed1917bb4ab6335919c7d973328ba520faca469e4", size = 248552, upload-time = "2026-11-04T03:13:10.931Z" },
 ]
 
 [[package]]
@@ -4770,6 +4816,15 @@ wheels = [
 ]
 
 [[package]]
+name = "segment-anything"
+version = "1.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/4f/88/7725f418f2bb4a7ac2e5e8295fbbca2900c70c8fe5ba48b3aff5788af9a2/segment_anything-1.0.tar.gz", hash = "sha256:ed0c9f6fb07bbef9c6238a7028a13c8272f1ba6b6305ca73e3e064266503736b", size = 31191, upload-time = "2023-04-06T18:04:40.816Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/75/77/8e0c16abf151a1dd076b562febc0da2ecf1132b0b41826087af96f101f42/segment_anything-1.0-py3-none-any.whl", hash = "sha256:86f67d417a915823c3302098effe9008b688945772517310956bb49de0e7f02e", size = 36560, upload-time = "2023-04-06T18:04:38.834Z" },
+]
+
+[[package]]
 name = "setuptools"
 version = "81.0.0"
 source = { registry = "https://pypi.org/simple" }
@@ -4977,6 +5032,36 @@ wheels = [
 ]
 
 [[package]]
+name = "tensorrt-cu12"
+version = "10.13.3.9.post1"
+source = { registry = "https://pypi.nvidia.com/" }
+dependencies = [
+    { name = "tensorrt-cu12-bindings", marker = "python_full_version < '3.14'" },
+    { name = "tensorrt-cu12-libs", marker = "python_full_version < '3.14'" },
+]
+sdist = { url = "https://pypi.nvidia.com/tensorrt-cu12/tensorrt_cu12-10.13.3.9.post1.tar.gz", hash = "sha256:49343e5f8901ceaec4430cca3b17df1d54ab0c532ab41a1e148b4beb3f964cb9" }
+
+[[package]]
+name = "tensorrt-cu12-bindings"
+version = "10.13.3.9.post1"
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f5/34/db750560b7db4b3ccfb47082bfa5e638884d9ed45423ae59057a2d6b6645/tensorrt_cu12_bindings-10.13.3.9.post1-cp312-none-manylinux_2_28_x86_64.whl", hash = "sha256:2cdedaf3e948b382af734950c0233f497fbaa886ce73641824798d03cc708436", size = 1184628, upload-time = "2025-11-07T17:51:25.706Z" },
+    { url = "https://files.pythonhosted.org/packages/0e/fc/a1ce83ddb29db8c50df943c7d79885db9b052a164f09b09570ac0441c2b4/tensorrt_cu12_bindings-10.13.3.9.post1-cp312-none-win_amd64.whl", hash = "sha256:10219950f3b2f0b1038a5a69f8644d1110aede43e4b7059e22f6c2ba923384f8", size = 877104, upload-time = "2025-11-07T19:23:10.114Z" },
+    { url = "https://files.pythonhosted.org/packages/ae/22/ee5c9fc9a1715244d7b323b136d837f83b017bae2b061804eaac35d57e38/tensorrt_cu12_bindings-10.13.3.9.post1-cp313-none-manylinux_2_28_x86_64.whl", hash = "sha256:9cca49b5eacad020c5eac5ac30325e12978f3e247553d510334967fc36b94585", size = 1184535, upload-time = "2025-11-07T17:47:41.302Z" },
+    { url = "https://files.pythonhosted.org/packages/f2/ad/6193df22d9c03c955adcbaa090d4b39e27c1dc487f1af694cbf630e86792/tensorrt_cu12_bindings-10.13.3.9.post1-cp313-none-win_amd64.whl", hash = "sha256:dc19ce0aac98a26113e505185756f24bde77047dfab46529c58e10d80c0a0cc9", size = 877085, upload-time = "2025-11-07T19:22:08.696Z" },
+]
+
+[[package]]
+name = "tensorrt-cu12-libs"
+version = "10.13.3.9.post1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "cuda-toolkit", extra = ["cudart"], marker = "python_full_version < '3.14'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/13/23/bd8c2565315d80d6388c426a35be1f9d4980ab924fd3e58395e77a7ea441/tensorrt_cu12_libs-10.13.3.9.post1.tar.gz", hash = "sha256:3492bfb90eda4bae5a033adfbc1ae7b7cca25fec221827169182bfbb32b35ac9", size = 729, upload-time = "2025-11-07T17:27:16.338Z" }
+
+[[package]]
 name = "threadpoolctl"
 version = "3.7.0"
 source = { registry = "https://pypi.org/simple" }
@@ -5112,6 +5197,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/81/34/39b8b749333db56c0585d7a11fa62a283c087bb1dfc897d69fb8cedbefb1/torchmetrics-1.9.0.tar.gz", hash = "sha256:a488609948600df52d3db4fcdab02e62aab2a85ef34da67037dc3e65b8512faa", size = 581765, upload-time = "2026-03-09T17:41:22.443Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/c3/a2/c7f6ebf546f8f644edf0f999aa98ece106986a77a7b922316bf6414ff825/torchmetrics-1.9.0-py3-none-any.whl", hash = "sha256:bfdcbff3dd1d96b3374bb2496eb39f23c4b28b8a845b6a18c313688e0d2d9ca1", size = 983384, upload-time = "2026-03-09T17:41:19.756Z" },
+]
+
+[[package]]
+name = "torchprofile"
+version = "0.1.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "torch" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/03/39/564175b0147da5f712702209de3904cf97de492a115943c75af1b1b56d82/torchprofile-0.1.0.tar.gz", hash = "sha256:aeb725e9446b3a6d8f82d0f0cf944a6ffb9cced4e5db1354ad3b9692ce820dac", size = 10608, upload-time = "2026-03-10T11:17:53.331Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/13/76/82c336b80fcd19ad9eedd7c17e459d69a0024aed7229dbcf663c975c5ded/torchprofile-0.1.0-py3-none-any.whl", hash = "sha256:39aefcd194927befb0cfe7ed886be565dee384e3889d0b6890bace5ae1614578", size = 9253, upload-time = "2026-03-10T11:17:49.258Z" },
 ]
 
 [[package]]

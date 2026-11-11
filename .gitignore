@@ -23,3 +23,6 @@ reports/profiling/**/*.nsys-rep
 reports/profiling/**/*.qdrep
 reports/profiling/**/*.qdstrm
 reports/profiling/**/*.sqlite
+
+# Distillation runtime: dataset copies, checkpoints, engines and vendored models.
+models/*/sam_distillation/

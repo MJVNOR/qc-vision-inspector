@@ -1,0 +1,19 @@
+{
+  "candidate": "yolo26s-seg",
+  "backend": "pytorch_fp32",
+  "validated": true,
+  "kernel_pid": 2288,
+  "frames": 4,
+  "cuda_kernel_count": 2272,
+  "ranges": [
+    "distill/capture",
+    "distill/frame",
+    "distill/h2d",
+    "distill/load_decode",
+    "distill/postprocess_d2h",
+    "distill/preprocess",
+    "distill/student_predict"
+  ],
+  "min_mask_iou_vs_unprofiled": 0.9992328782046627,
+  "note": "Host NVTX intervals can nest; not nominal latency."
+}

@@ -1,0 +1,9 @@
+{
+  "kernel_pid": 38668,
+  "candidate": "yolo26m-seg",
+  "backend": "pytorch_fp32",
+  "frames": 4,
+  "dataset_fingerprint": "c1743b64b515a6eeb6ec1605f1d384beb1b76d975188f8ed9bbf3a11a3a0dfc5",
+  "batch": 1,
+  "nvtx": true
+}

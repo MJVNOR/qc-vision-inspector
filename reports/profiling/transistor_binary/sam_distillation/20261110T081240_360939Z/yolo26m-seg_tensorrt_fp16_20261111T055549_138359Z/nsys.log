@@ -1,0 +1,11 @@
+WARNING: Device-side CUDA Event completion trace is currently enabled.
+         This may increase runtime overhead and the likelihood of false
+         dependencies across CUDA Streams. If you wish to avoid this, please
+         disable the feature with --cuda-event-trace=false.
+Capture range started in the application.
+Capture range ended in the application.
+Generating 'C:\Users\marti\AppData\Local\Temp\nsys-report-0287.qdstrm'
+[1/1] [0%                          ] capture.nsys-repProcessing events...
+[1/1] [0%                          ] capture.nsys-rep[1/1] [===========52%              ] capture.nsys-rep[1/1] [========================100%] capture.nsys-rep[1/1] [========================100%] capture.nsys-rep
+Generated:
+	C:\Users\marti\Documents\BetterClasificator\reports\profiling\transistor_binary\sam_distillation\20261110T081240_360939Z\yolo26m-seg_tensorrt_fp16_20261111T055549_138359Z\capture.nsys-rep

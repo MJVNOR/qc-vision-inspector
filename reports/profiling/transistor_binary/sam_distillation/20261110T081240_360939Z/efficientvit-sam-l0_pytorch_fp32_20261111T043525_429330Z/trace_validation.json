@@ -1,0 +1,19 @@
+{
+  "candidate": "efficientvit-sam-l0",
+  "backend": "pytorch_fp32",
+  "validated": true,
+  "kernel_pid": 30944,
+  "frames": 4,
+  "cuda_kernel_count": 1784,
+  "ranges": [
+    "distill/capture",
+    "distill/frame",
+    "distill/h2d",
+    "distill/load_decode",
+    "distill/postprocess_d2h",
+    "distill/preprocess",
+    "distill/student_predict"
+  ],
+  "min_mask_iou_vs_unprofiled": 0.9997374355896681,
+  "note": "Host NVTX intervals can nest; not nominal latency."
+}

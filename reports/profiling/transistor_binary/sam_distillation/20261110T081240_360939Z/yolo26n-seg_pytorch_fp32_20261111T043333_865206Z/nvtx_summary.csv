@@ -1,0 +1,8 @@
+stage,count,median,mean
+distill/capture,1,266.118563,266.118563
+distill/frame,4,58.565284500000004,60.7209365
+distill/h2d,4,0.631967,0.63090775
+distill/load_decode,4,37.053495,39.42729
+distill/postprocess_d2h,4,0.391534,0.43444375
+distill/preprocess,4,0.2645555,0.29403925
+distill/student_predict,4,19.8241765,19.82005275
