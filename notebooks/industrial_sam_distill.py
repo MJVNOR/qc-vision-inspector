@@ -5470,7 +5470,8 @@ def rc_saved_report_snapshot(Path, ds_capture_mode, ds_state, mo):
     _text = _snapshot.read_text(encoding="utf-8")
     _text = _text.replace("![Comparación de clasificación](classification_comparison.png)", "").replace("![Máscaras y decisiones](test_bad_masks.png)", "")
     mo.output.append(mo.md(_text))
-    for _filename in ["classification_comparison.png", "test_bad_masks.png"]:
+    # La galería completa se conserva en reports/; no incrustarla evita exceder el límite de salida.
+    for _filename in ["classification_comparison.png"]:
         _image = _snapshot.parent / _filename
         if _image.is_file():
             mo.output.append(mo.image(str(_image)))
