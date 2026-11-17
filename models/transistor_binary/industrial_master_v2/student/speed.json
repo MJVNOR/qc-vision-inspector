@@ -1,0 +1,15 @@
+{
+  "checkpoint_sha256_16": "728aa7f56b5cb1f4",
+  "side": 512,
+  "images": 313,
+  "fwd_cuda_ms_median": 20.139039993286133,
+  "fwd_cuda_ms_p95": 32.51059722900389,
+  "seg_ms_median": 23.95,
+  "seg_ms_p95": 35.181999999999995,
+  "teacher_seg_ms_median": 1600.0,
+  "teacher_seg_ms_median_no_first": 1600.0,
+  "speedup_vs_teacher": 66.80584551148226,
+  "speedup_vs_teacher_no_first": 66.80584551148226,
+  "peak_allocated_gb": 0.303228928,
+  "nota": "batch=1, incluye preparacion y vuelta de la mascara a CPU; sin profiler ni NVTX"
+}

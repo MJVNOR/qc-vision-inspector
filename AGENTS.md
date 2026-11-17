@@ -37,6 +37,15 @@ imbalanced: `data/processed/transistor_binary/{good:273, bad:40}` + `labels.csv`
   MANDATORY: all notebook reads/writes go through `marimo._code_mode`
   (the marimo MCP): no direct file edits, no shell heredocs into notebooks,
   no Python scripts that touch notebook state outside the kernel.
+  EXCEPTION (user mandate, narrow): creating the initial empty skeleton of a
+  brand-new notebook file (marimo boilerplate only: `import marimo`,
+  `__generated_with`, `app = marimo.App(...)`, the first `mo` import cell,
+  `if __name__ == "__main__": app.run()`) may be done with a direct file
+  write, but ONLY when the user explicitly instructs it in that moment (e.g.
+  no marimo server is up yet for that file and the user says to create it
+  anyway). This never applies to a notebook with a live/running server, and
+  never extends to adding real content cells — those still go through the
+  MCP once the server is up.
 - Reach the live kernel ONLY via the marimo MCP. In OpenCode, use the
   `execute` Code Mode bridge (`search({query:"marimo"})`, then
   `tools.marimo.list_sessions()` / `tools.marimo.execute_code(...)`).
@@ -72,14 +81,25 @@ imbalanced: `data/processed/transistor_binary/{good:273, bad:40}` + `labels.csv`
   imports count as definitions (no double `import X as Y`).
 - Re-running cells cascades downstream, including `mlflow_log` cells
   (re-logs runs → delete duplicates, keep latest per run name).
-- `notebooks/industrial_master.py` is the reusable GOOD/BAD template (A–H stay
-  as experimental history, never modify them for master work). Rules: no
+- `notebooks/industrial_master_v2.py` is the reusable GOOD/BAD template: SAM
+  teacher -> distilled EfficientViT-SAM student -> DINOv2-masked + EfficientAd
+  -> fusion -> OOF calibration -> `infer()`. `industrial_master.py` is
+  superseded; like fases A–H and the `industrial_sam*.py` notebooks it stays as
+  experimental history, never modify them for master work. Rules: no
   transistor hardcodes (`313`, defect lists, `bad_022`, `experiment_ids=["1"]`
-  — resolve MLflow by name); caches under `models/<PROJECT_NAME>/` with dataset
-  fingerprint; all calibration train-only per fold via `cv_splits()`
-  (`StratifiedGroupKFold` when a group column exists); local search lives only
-  in `compute_local_anomaly_score` (FAISS door); underscore names are
-  cell-local, so readable `_train_idx`-style names are safe to repeat.
+  — resolve MLflow by name; the SAM prompt is `SAM_PROMPT` in §1); caches live
+  in their own `models/<PROJECT_NAME>/industrial_master_v2/` (figures in
+  `reports/figures/<PROJECT_NAME>/industrial_master_v2/`) keyed by dataset
+  fingerprint — before choosing an output dir check it holds no git-tracked
+  files from another pipeline (`prod/` and the base figures dir do); all
+  fold-based calibration is train-only via the shared
+  `cv_splits(y, groups=...)` of §2 (`StratifiedGroupKFold` when a group column
+  exists); OOF calibration (§10) runs BEFORE `infer()` (§13) so production
+  prefers the `oof_*` fields, and §11 reports a `prod` arm = exactly what
+  `infer()` decides; no Nsight/NVTX/ONNX-CPU benchmarks in it (those live in
+  `industrial_profile.py`); underscore names are cell-local, so readable
+  `_train_idx`-style names are safe to repeat. The old master's local-patch
+  rescue (`compute_local_anomaly_score`, FAISS door) is not part of v2.
 - Export a notebook snapshot with
   `uv run marimo export ipynb notebooks/<n>.py -o notebooks/<n>.ipynb`
   (needs `nbformat`). Extra runtime deps from master work: `seaborn`, `onnx`,

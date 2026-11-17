@@ -34,3 +34,10 @@ models/*/prod_sam31_distill/**/*.ckpt
 models/*/prod_sam31_distill/effad.onnx
 models/*/prod_sam31_distill/student/masks_png/
 models/*/prod_sam31_distill/teacher/masks/
+
+# Plantilla industrial_master_v2: mismo criterio (pesos y mascaras se regeneran desde la libreta).
+models/*/industrial_master_v2/**/*.pt
+models/*/industrial_master_v2/**/*.ckpt
+models/*/industrial_master_v2/effad.onnx
+models/*/industrial_master_v2/student/masks_png/
+models/*/industrial_master_v2/teacher/masks/
